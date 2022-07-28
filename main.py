@@ -160,6 +160,15 @@ class Overworld(QMainWindow):
         self.SinnohAttribute_sp['Width'] = self.GridWidth
         self.SinnohAttribute_Ex_sp['Width'] = self.GridWidth
 
+        if self.IsArrayed is True:
+            for n in range(len(self.Sinnoh['ZoneIDs']['Array'])):
+                if self.Sinnoh['ZoneIDs']['Array'][n] == -1000:
+                    self.Sinnoh['ZoneIDs']['Array'][n] = -1
+        else:
+            for n in range(len(self.Sinnoh['ZoneIDs'])):
+                if self.Sinnoh['ZoneIDs'][n] == -1000:
+                    self.Sinnoh['ZoneIDs'][n] = -1
+                    
         if os.path.exists(outDir) == False:
             os.makedirs(outDir)
 

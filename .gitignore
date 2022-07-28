@@ -34,3 +34,8 @@ input/SinnohAttribute_Ex.json
 input/SinnohAttribute.json
 input/Sinnoh.json
 dist/Sinnoh Map Matrix Editor.exe
+output/Sinnoh.json
+output/SinnohAttribute.json
+output/SinnohAttribute_Ex.json
+output/SinnohAttribute_Ex_sp.json
+output/SinnohAttribute_sp.json
