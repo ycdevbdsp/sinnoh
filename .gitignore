@@ -7,3 +7,30 @@ __pycache__/map.cpython-310.pyc
 .idea/modules.xml
 .idea/sinnoh.iml
 .idea/vcs.xml
+__pycache__/main.cpython-310.pyc
+build.spec
+build/build/Analysis-00.toc
+build/build/base_library.zip
+build/build/build.exe.manifest
+build/build/EXE-00.toc
+build/build/PKG-00.toc
+build/build/PYZ-00.pyz
+build/build/PYZ-00.toc
+build/build/Sinnoh Map Matrix Editor.pkg
+build/build/Tree-00.toc
+build/build/Tree-01.toc
+build/build/Tree-02.toc
+build/build/warn-build.txt
+build/build/xref-build.html
+inputbase/uSinnoh.json
+inputbase/SinnohAttribute_sp.json
+inputbase/SinnohAttribute_Ex_sp.json
+inputbase/SinnohAttribute_Ex.json
+inputbase/SinnohAttribute.json
+inputbase/Sinnoh.json
+input/SinnohAttribute_sp.json
+input/SinnohAttribute_Ex_sp.json
+input/SinnohAttribute_Ex.json
+input/SinnohAttribute.json
+input/Sinnoh.json
+dist/Sinnoh Map Matrix Editor.exe
