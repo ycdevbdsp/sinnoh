@@ -1,15 +1,22 @@
 import sys
+import UnityPy
 import os
 from os import path
+import re
 import json
+from tqdm import tqdm
 from map import *
 from math import floor
 from tkinter import filedialog
 from tkinter import *
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget
 from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QTextDocument, QFont
 from PyQt5.QtCore import Qt, QSize, QRectF
 import clicklabel
+from collisioneditor import CollisionEditor
+import collisionHeader
+
+    
 
 class Overworld(QMainWindow):
 
@@ -18,15 +25,26 @@ class Overworld(QMainWindow):
     IsArrayed = False
     CellWidth = 0
     CellHeight = 0
+    CollisionEditor = None
+    CollisionTrees = {}
     GridWidth = 0
     GridHeight = 0
     Loading = False
     SelectedCell = None
+    CellMatrix = {}
     Sinnoh = None
     SinnohAttribute = None
     SinnohAttribute_sp = None
     SinnohAttribute_Ex = None
     SinnohAttribute_Ex_sp = None
+
+    MapMatrixGroup = [
+        "Sinnoh",
+        "SinnohAttribute",
+        "SinnohAttribute_Ex",
+        "SinnohAttribute_Ex_sp",
+        "SinnohAttribute_sp"
+    ]
 
     def __init__(self, parent=None):
         super().__init__()
@@ -34,7 +52,7 @@ class Overworld(QMainWindow):
         self.ui.setupUi(self)
         self.ui.uiMap.clicked.connect(self.mousePressed)
         self.resized.connect(self.repaintUI)
-        self.ui.actionLoad.triggered.connect(self.loadData)
+        self.ui.actionLoad.triggered.connect(self.loadGameSettings)
         self.uiMapRatios = {
             'w': self.ui.uiMap.width() / self.width(),
             'h': self.ui.uiMap.height() / self.height()
@@ -43,6 +61,72 @@ class Overworld(QMainWindow):
         self.ui.uiHeightSB.valueChanged.connect(self.heightChanged)
         self.ui.btnSaveCell.clicked.connect(self.saveCell)
         self.ui.btnSaveMatrix.clicked.connect(self.saveMatrix)
+        self.ui.btnEditCollision.clicked.connect(self.openCollisionEditor)
+
+    def loadGameSettings(self):
+        root = Tk()
+        root.withdraw()
+        gamesettings = filedialog.askopenfilename()
+        attributesList = []
+        attributesExList = []
+
+        env = UnityPy.load(gamesettings)
+
+        for i in tqdm(range(len(env.objects))):
+            obj = env.objects[i]
+            if obj.type.name == "MonoBehaviour":
+                tree = env.objects[i].read_typetree()
+
+                if re.search(r'map[0-9]*_[0-9]*.*', tree['m_Name']):
+                    #tree['Attributes'] has what we need, but save the whole tree file
+                    self.CollisionTrees[tree['m_Name']] = tree
+
+                    for at in tree['Attributes']:
+                        if '_Ex' not in tree['m_Name'] and at not in attributesList:
+                            attributesList.append(at)
+                        elif '_Ex' in tree['m_Name'] and at not in attributesExList:
+                            attributesExList.append(at)
+                    
+                elif tree['m_Name'] in self.MapMatrixGroup:
+                    if tree['m_Name'] == "Sinnoh":
+                        self.Sinnoh = tree
+                    elif tree['m_Name'] == "SinnohAttribute":
+                        self.SinnohAttribute = tree
+                    elif tree['m_Name'] == "SinnohAttribute_Ex":
+                        self.SinnohAttribute_Ex = tree
+                    elif tree['m_Name'] == "SinnohAttribute_Ex_sp":
+                        self.SinnohAttribute_Ex_sp = tree
+                    elif tree['m_Name'] == "SinnohAttribute_sp":
+                        self.SinnohAttribute_sp = tree
+        
+        with open('attributesList.json', 'w+') as af:
+            json.dump({'attributes': attributesList}, af)
+
+        with open('attributesExList.json', 'w+') as afex:
+            json.dump({'attributes':attributesExList}, afex)
+        
+        self.GridWidth = self.Sinnoh['Width']
+
+        if 'Array' in self.Sinnoh['ZoneIDs']:
+            zoneIDCount = len(self.Sinnoh['ZoneIDs']['Array'])
+            self.IsArrayed = True
+        else:
+            zoneIDCount = len(self.Sinnoh['ZoneIDs'])
+            self.IsArrayed = False
+
+        self.GridHeight = int(zoneIDCount / self.GridWidth)
+
+        #Set the width and height in the spinboxes
+
+        self.ui.uiWidthSB.setValue(self.GridWidth)
+
+        if zoneIDCount % self.GridWidth > 0:
+            self.GridHeight += 1
+
+        self.ui.uiHeightSB.setValue(self.GridHeight)
+
+        self.Loading = False
+        self.drawOverworld()
 
 
     def loadData(self):
@@ -124,6 +208,26 @@ class Overworld(QMainWindow):
         self.Loading = False
         self.drawOverworld()
 
+    def openCollisionEditor(self):
+        colFileName = f"map{self.CellMatrix['col']}_{self.CellMatrix['row']}"
+        exFileName = f"{colFileName}_Ex"
+
+        if colFileName not in self.CollisionTrees:
+            newCol = collisionHeader.colHeader
+            newCol['m_Name'] = colFileName
+            self.CollisionTrees[colFileName] = newCol
+
+        if exFileName not in self.CollisionTrees:
+            newEx = collisionHeader.exHeader
+            newEx['m_Name'] = exFileName
+            self.CollisionTrees[exFileName] = newEx
+
+        collisionData = self.CollisionTrees[colFileName]
+        exAttributeData = self.CollisionTrees[exFileName]
+        self.CollisionEditor = CollisionEditor(collisionData, exAttributeData)
+        self.CollisionEditor.show()
+
+
     def saveCell(self):
         if self.SelectedCell is None:
             return
@@ -168,7 +272,7 @@ class Overworld(QMainWindow):
             for n in range(len(self.Sinnoh['ZoneIDs'])):
                 if self.Sinnoh['ZoneIDs'][n] == -1000:
                     self.Sinnoh['ZoneIDs'][n] = -1
-                    
+
         if os.path.exists(outDir) == False:
             os.makedirs(outDir)
 
@@ -187,13 +291,20 @@ class Overworld(QMainWindow):
         with open(f"{outDir}\SinnohAttribute_Ex_sp.json", 'w+') as of:
             json.dump(self.SinnohAttribute_Ex_sp, of)
 
-    def mousePressed(self, event):
+    def mousePressed(self, event, map):
         self.SelectedCell = None
+
+        if self.CellHeight == 0:
+            return
 
         x = floor(event.x() / self.ui.uiMap.width())
         y = floor(event.y() / self.ui.uiMap.height())
 
-        cell = (int((event.y() / self.CellHeight)) * self.GridWidth) + int((event.x() / self.CellWidth))
+        row = int((event.y() / self.CellHeight))
+        col = int((event.x() / self.CellWidth))
+        cell = row * self.GridWidth + col
+
+        self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
 
         if 1:
             print(f"event.x({event.x()}), event.y({event.y()}); CellWidth({self.CellWidth}); CellHeight({self.CellHeight}); x({x})")

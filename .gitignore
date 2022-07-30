@@ -39,3 +39,7 @@ output/SinnohAttribute.json
 output/SinnohAttribute_Ex.json
 output/SinnohAttribute_Ex_sp.json
 output/SinnohAttribute_sp.json
+__pycache__/collision.cpython-310.pyc
+__pycache__/collisioneditor.cpython-310.pyc
+__pycache__/collisionHeader.cpython-310.pyc
+mapout/*

@@ -375,7 +375,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>530</y>
+      <y>540</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -388,13 +388,26 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>560</y>
+      <y>570</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>Save Matrix</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnEditCollision">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>510</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Edit Collision</string>
     </property>
    </widget>
   </widget>
