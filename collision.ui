@@ -16,8 +16,8 @@
   <widget class="QSpinBox" name="uiColHeightSB">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>210</y>
+     <x>80</x>
+     <y>160</y>
      <width>42</width>
      <height>22</height>
     </rect>
@@ -39,8 +39,8 @@
   <widget class="QLabel" name="colHeightLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>200</y>
+     <x>40</x>
+     <y>150</y>
      <width>47</width>
      <height>31</height>
     </rect>
@@ -52,27 +52,14 @@
   <widget class="QLabel" name="colWidthLabel">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>172</y>
+     <x>40</x>
+     <y>122</y>
      <width>47</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>Width</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnColSaveCell">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>110</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Save Cell</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="uiColValue">
@@ -88,8 +75,8 @@
   <widget class="QSpinBox" name="uiColWidthSB">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>180</y>
+     <x>80</x>
+     <y>130</y>
      <width>42</width>
      <height>22</height>
     </rect>
@@ -98,8 +85,8 @@
   <widget class="QPushButton" name="btnColSaveMatrix">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>140</y>
+     <x>40</x>
+     <y>220</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -124,7 +111,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -318,6 +305,129 @@
      <width>111</width>
      <height>20</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBoxCollisionTile">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>100</y>
+     <width>111</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>NONE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>WALKABLE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>WALL</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>GRASS</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>TALLGRASS</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>GRASS2</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>GRASS3</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>PONDWATER</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>OCEANWATER</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>PUDDLE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>PUDDLE2</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>LEDGELEFT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>LEDGEDOWN</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>LEDGEDOWNLEFT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>DOOR?</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>BIKELEDGESTART</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>BIKELEDGERIDE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>SINKSNOW</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>MUD</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>SNOW</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>61</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Collision Tile</string>
    </property>
   </widget>
  </widget>

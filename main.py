@@ -70,40 +70,50 @@ class Overworld(QMainWindow):
         attributesList = []
         attributesExList = []
 
-        env = UnityPy.load(gamesettings)
+        if path.exists("gamesettings_unpackedmaps"):
+            print("ready")
+        else:
+            env = UnityPy.load(gamesettings)
 
-        for i in tqdm(range(len(env.objects))):
-            obj = env.objects[i]
-            if obj.type.name == "MonoBehaviour":
-                tree = env.objects[i].read_typetree()
+            for i in tqdm(range(len(env.objects))):
+                obj = env.objects[i]
+                if obj.type.name == "MonoBehaviour":
+                    tree = env.objects[i].read_typetree()
 
-                if re.search(r'map[0-9]*_[0-9]*.*', tree['m_Name']):
-                    #tree['Attributes'] has what we need, but save the whole tree file
-                    self.CollisionTrees[tree['m_Name']] = tree
-
-                    for at in tree['Attributes']:
-                        if '_Ex' not in tree['m_Name'] and at not in attributesList:
-                            attributesList.append(at)
-                        elif '_Ex' in tree['m_Name'] and at not in attributesExList:
-                            attributesExList.append(at)
+                    if re.search(r'map[0-9]*_[0-9]*.*', tree['m_Name']):
+                        #tree['Attributes'] has what we need, but save the whole tree file
+                        self.CollisionTrees[tree['m_Name']] = tree
+                        
+                        #Commented out but retained for debugging purposes.    
+                        # if 0:
+                        # for at in tree['Attributes']:
+                        #     if '_Ex' not in tree['m_Name'] and at not in attributesList:
+                        #         attributesList.append(at)
+                        #     elif '_Ex' in tree['m_Name'] and at not in attributesExList:
+                        #         attributesExList.append(at)
+                        
+                    elif tree['m_Name'] in self.MapMatrixGroup:
+                        if tree['m_Name'] == "Sinnoh":
+                            self.Sinnoh = tree
+                        elif tree['m_Name'] == "SinnohAttribute":
+                            self.SinnohAttribute = tree
+                        elif tree['m_Name'] == "SinnohAttribute_Ex":
+                            self.SinnohAttribute_Ex = tree
+                        elif tree['m_Name'] == "SinnohAttribute_Ex_sp":
+                            self.SinnohAttribute_Ex_sp = tree
+                        elif tree['m_Name'] == "SinnohAttribute_sp":
+                            self.SinnohAttribute_sp = tree
                     
-                elif tree['m_Name'] in self.MapMatrixGroup:
-                    if tree['m_Name'] == "Sinnoh":
-                        self.Sinnoh = tree
-                    elif tree['m_Name'] == "SinnohAttribute":
-                        self.SinnohAttribute = tree
-                    elif tree['m_Name'] == "SinnohAttribute_Ex":
-                        self.SinnohAttribute_Ex = tree
-                    elif tree['m_Name'] == "SinnohAttribute_Ex_sp":
-                        self.SinnohAttribute_Ex_sp = tree
-                    elif tree['m_Name'] == "SinnohAttribute_sp":
-                        self.SinnohAttribute_sp = tree
-        
-        with open('attributesList.json', 'w+') as af:
-            json.dump({'attributes': attributesList}, af)
+            #Save the collision trees and sinnoh matrix files to disk for faster loading later.    
 
-        with open('attributesExList.json', 'w+') as afex:
-            json.dump({'attributes':attributesExList}, afex)
+
+        #Commented out but retained for debugging purposes.    
+        # if 0:
+        #     with open('attributesList.json', 'w+') as af:
+        #         json.dump({'attributes': attributesList}, af)
+
+        #     with open('attributesExList.json', 'w+') as afex:
+        #         json.dump({'attributes':attributesExList}, afex)
         
         self.GridWidth = self.Sinnoh['Width']
 

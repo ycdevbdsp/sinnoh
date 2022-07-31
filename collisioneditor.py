@@ -1,3 +1,4 @@
+import json
 import os
 from os import path
 from tqdm import tqdm
@@ -32,7 +33,8 @@ class CollisionEditor(QWidget):
         self.ui.uiColExMap.clicked.connect(self.mousePressed)
         self.ui.uiColHeightSB.valueChanged.connect(self.heightChanged)
         self.ui.uiColWidthSB.valueChanged.connect(self.widthChanged)
-
+        self.ui.btnColSaveMatrix.clicked.connect(self.saveMatrix)
+        self.ui.comboBoxCollisionTile.currentTextChanged.connect(self.collisionTileChanged)
         self.CollisionData = collisionData
         self.ExData = exData
 
@@ -47,6 +49,17 @@ class CollisionEditor(QWidget):
         self.drawCollisions()
         self.Loading = False
 
+    def collisionTileChanged(self):
+        if self.SelectedCell == None:
+            return
+        
+        cell = self.SelectedCell['cell']
+        tile = self.ui.comboBoxCollisionTile.currentText()
+
+        if self.SelectedCell['map'] == self.ui.uiColMap:
+            self.CollisionData['Attributes'][cell] = COLLISIONS[tile]
+        elif self.SelectedCell['map'] == self.ui.uiColExMap:
+            self.ExData['Attributes'][cell] = COLLISIONS[tile]
 
     def heightChanged(self):
         if self.Loading is True:
@@ -124,18 +137,21 @@ class CollisionEditor(QWidget):
                 z = zJson[tCell]
                 rect = QRectF(c*cellWidth, r*cellHeight, cellWidth, cellHeight)
                 
-                if z == 128:
-                    qp.setBrush(QBrush(BLACK, Qt.SolidPattern))
-                elif z == 0:
-                    qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
-                elif z == 105128:
-                    qp.setBrush(QBrush(ORANGE, Qt.SolidPattern))
-                elif z == 16000:
-                    qp.setBrush(QBrush(GREEN, Qt.SolidPattern))
-                elif z == -1:
-                    qp.setBrush(QBrush(RED, Qt.SolidPattern))
+                if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
+                    qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
                 else:
-                    qp.setBrush(QBrush(YELLOW, Qt.SolidPattern))
+                    if z == 128:
+                        qp.setBrush(QBrush(BLACK, Qt.SolidPattern))
+                    elif z == 0:
+                        qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
+                    elif z == 105128:
+                        qp.setBrush(QBrush(ORANGE, Qt.SolidPattern))
+                    elif z == 16000:
+                        qp.setBrush(QBrush(GREEN, Qt.SolidPattern))
+                    elif z == -1:
+                        qp.setBrush(QBrush(RED, Qt.SolidPattern))
+                    else:
+                        qp.setBrush(QBrush(YELLOW, Qt.SolidPattern))
 
                 qp.drawRect(rect)
             
@@ -157,13 +173,26 @@ class CollisionEditor(QWidget):
             cell = row * self.GridWidth + col
 
             self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
-            self.SelectedCell = cell
+            self.SelectedCell = {
+                'cell': cell,
+                'map': map
+            }
 
-            if self.SelectedCell > (self.GridHeight * self.GridWidth):
+            if self.SelectedCell['cell'] > (self.GridHeight * self.GridWidth):
                 self.SelectedCell = None
                 self.drawCollision(map)
                 return
 
-            self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell]))
-            self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell]))
+            self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell['cell']]))
+            self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell['cell']]))
+            self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[self.CollisionData['Attributes'][self.SelectedCell['cell']]])
             self.drawCollision(map)
+
+    def saveMatrix(self):
+        if os.path.exists("output") is False:
+            os.makedirs("output")
+            
+        with open(f"output/{self.CollisionData['m_Name']}.json", 'w+') as out:
+            json.dump(self.CollisionData, out)
+        with open(f"output/{self.ExData['m_Name']}.json", 'w+') as out:
+            json.dump(self.ExData, out)

@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QColor
 
+#COLORS
 alpha = int(255*0.25)
-
 BLACK = QColor(0, 0, 0, alpha)
 BLUE = QColor(0, 255, 247, alpha)
 GREEN = QColor(0, 255, 0, alpha)
@@ -9,3 +9,49 @@ WHITE = QColor(255, 255, 255, alpha)
 ORANGE = QColor(250, 124, 4, alpha)
 RED = QColor(255, 0, 0, alpha)
 YELLOW = QColor(255, 252, 5, alpha)
+SELECTED = QColor(255, 255, 0, 255)
+
+
+#COLLISION VALUES
+COLLISIONS = {
+    'NONE': -1,
+    'WALKABLE': 0,
+    'WALL': 128,
+    'GRASS': 2000,
+    'TALL GRASS': 3000,
+    'GRASS2': 4000,
+    'GRASS3': 5000,
+    'PONDWATER': 16000,
+    'OCEANWATER': 21000,
+    'PUDDLE': 22000,
+    'PUDDLE2': 24000,
+    'LEDGELEFT': 57128,
+    'LEDGEDOWN': 59128,
+    'LEDGEDOWNLEFT': 63128,
+    'DOOR?': 105128,
+    'BIKELEDGESTART': 112000,
+    'BIKELEDGERIDE': 118000,
+    'MUD': 164000,
+    'SNOW': 168000,
+    'SINKSNOW': 161000,
+    -1: 'NONE',
+    0: 'WALKABLE',
+    128: 'WALL',
+    2000: 'GRASS',
+    3000: 'TALLGRASS',
+    4000: 'GRASS2',
+    5000: 'GRASS3',
+    16000: 'PONDWATER',
+    21000: 'OCEANWATER',
+    22000: 'PUDDLE',
+    24000: 'PUDDLE2',
+    57128: 'LEDGELEFT',
+    59128: 'LEDGEDOWN',
+    63128: 'LEDGEDOWNLEFT',
+    105128: 'DOOR?',
+    112000: 'BIKELEDGESTART',
+    118000: 'BIKELEDGERIDE',
+    161000: 'SINKSNOW',
+    164000: 'MUD',
+    168000: 'SNOW'
+}
