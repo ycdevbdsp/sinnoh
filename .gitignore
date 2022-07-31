@@ -1,6 +1,5 @@
 .input/*
-__pycache__/clicklabel.cpython-310.pyc
-__pycache__/map.cpython-310.pyc
+__pycache__/*
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/inspectionProfiles/Project_Default.xml
 .idea/misc.xml
@@ -43,3 +42,4 @@ __pycache__/collision.cpython-310.pyc
 __pycache__/collisioneditor.cpython-310.pyc
 __pycache__/collisionHeader.cpython-310.pyc
 mapout/*
+maps/*

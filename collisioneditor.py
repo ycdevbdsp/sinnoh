@@ -1,3 +1,5 @@
+import os
+from os import path
 from tqdm import tqdm
 from map import *
 from math import floor
@@ -8,6 +10,7 @@ from PyQt5.QtGui import QPainter, QPen, QBrush, QColor
 from PyQt5.QtCore import Qt, QRectF
 import clicklabel
 import collision
+from constants import *
 
 
 class CollisionEditor(QWidget):
@@ -26,6 +29,7 @@ class CollisionEditor(QWidget):
         self.ui = collision.Ui_CollisionEditor()
         self.ui.setupUi(self)
         self.ui.uiColMap.clicked.connect(self.mousePressed)
+        self.ui.uiColExMap.clicked.connect(self.mousePressed)
         self.ui.uiColHeightSB.valueChanged.connect(self.heightChanged)
         self.ui.uiColWidthSB.valueChanged.connect(self.widthChanged)
 
@@ -47,7 +51,7 @@ class CollisionEditor(QWidget):
     def heightChanged(self):
         if self.Loading is True:
             return
-            
+        print("height changed")
         self.GridHeight = self.ui.uiColHeightSB.value()
         self.drawCollisions()
 
@@ -55,6 +59,7 @@ class CollisionEditor(QWidget):
         if self.Loading is True:
             return
 
+        print("width changed")
         self.GridWidth = self.ui.uiColWidthSB.value()
         self.drawCollisions()
         
@@ -63,29 +68,44 @@ class CollisionEditor(QWidget):
         self.drawCollision(self.ui.uiColExMap)
 
     def drawCollision(self, map):
-        if self.CellSize is None:
-            self.CellSize = {}
-            self.CellSize['width'] = int(map.width() / self.GridWidth)
-            self.CellSize['height'] = self.CellSize['width']
+        print(f"***Draw Collision***\nmap width: {map.width()}\nmap height: {map.height()}")
+        
+        if os.path.exists(f"maps/{self.CollisionData['m_Name']}c.png"):
+            canvas = QtGui.QPixmap(f"maps/{self.CollisionData['m_Name']}c.png")
+            map.setPixmap(canvas)
+        else:
+            if self.CellSize is None:
+                    self.CellSize = {}
+                    self.CellSize['width'] = int(map.width() / self.GridWidth)
+                    self.CellSize['height'] = self.CellSize['width']
 
-        canvas = QtGui.QPixmap(self.CellSize['width'] * self.GridWidth, self.CellSize['height'] * self.GridHeight)
-        map.setPixmap(canvas)
-        map.pixmap().fill(QtGui.QColor("white"))
+            canvas = QtGui.QPixmap(self.CellSize['width'] * self.GridWidth, self.CellSize['height'] * self.GridHeight)
+            map.setPixmap(canvas)
+            map.pixmap().fill(QtGui.QColor("white"))
+
         qp = QPainter(map.pixmap())
+
+        if self.CellSize is None:
+                    self.CellSize = {}
+                    self.CellSize['width'] = int(map.pixmap().width() / self.GridWidth)
+                    self.CellSize['height'] = self.CellSize['width']
 
         qp.setBrush(QBrush(QColor("black"), Qt.SolidPattern))
         pen = QPen(QtGui.QColor("white"))
         qp.setPen(pen)
         
-        print(f"uiColMapWidth({map.width()}")
-        cellWidth = floor(int(map.width() / self.GridWidth))
+        cellWidth = floor(int(map.pixmap().width() / self.GridWidth))
         cellHeight = cellWidth
+        print(f"cell width: {cellWidth}\ncell height: {cellHeight}\n")
 
-        zJson = self.CollisionData['Attributes']
+        if map == self.ui.uiColMap:
+            zJson = self.CollisionData['Attributes']
+        elif map == self.ui.uiColExMap:
+            zJson = self.ExData['Attributes']
 
         #Before we begin drawing the grid, if width x height exceeds the count of ZoneIDs
         #then we need to add new entries to the arrays of each file.
-        print(f"len(zJson)({len(zJson)}\ncellWidth({cellWidth})")
+        #print(f"len(zJson)({len(zJson)}\ncellWidth({cellWidth})")
 
         if self.GridHeight * self.GridWidth > len(zJson):
             for n in range(self.GridHeight*self.GridWidth - len(zJson)):
@@ -93,7 +113,10 @@ class CollisionEditor(QWidget):
         elif self.GridHeight * self.GridWidth < len(zJson):
             zJson = zJson[:-(len(zJson) - (self.GridHeight * self.GridWidth))]
 
-        self.CollisionData['Attributes'] = zJson
+        if map == self.ui.uiColMap:
+            self.CollisionData['Attributes'] = zJson
+        elif map == self.ui.uiColExMap:
+            self.ExData['Attributes'] = zJson
 
         for r in range(self.GridHeight):
             for c in range(self.GridWidth):
@@ -102,15 +125,17 @@ class CollisionEditor(QWidget):
                 rect = QRectF(c*cellWidth, r*cellHeight, cellWidth, cellHeight)
                 
                 if z == 128:
-                    qp.setBrush(QBrush(QColor("black"), Qt.SolidPattern))
+                    qp.setBrush(QBrush(BLACK, Qt.SolidPattern))
                 elif z == 0:
-                    qp.setBrush(QBrush(QColor("white"), Qt.SolidPattern))
+                    qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
                 elif z == 105128:
-                    qp.setBrush(QBrush(QColor("orange"), Qt.SolidPattern))
+                    qp.setBrush(QBrush(ORANGE, Qt.SolidPattern))
                 elif z == 16000:
-                    qp.setBrush(QBrush(QColor("blue"), Qt.SolidPattern))
+                    qp.setBrush(QBrush(GREEN, Qt.SolidPattern))
                 elif z == -1:
-                    qp.setBrush(QBrush(QColor("red"), Qt.SolidPattern))
+                    qp.setBrush(QBrush(RED, Qt.SolidPattern))
+                else:
+                    qp.setBrush(QBrush(YELLOW, Qt.SolidPattern))
 
                 qp.drawRect(rect)
             
@@ -125,10 +150,8 @@ class CollisionEditor(QWidget):
 
             if self.CellHeight == 0:
                 return
-
-            x = floor(event.x() / self.ui.uiColMap.width())
-            y = floor(event.y() / self.ui.uiColMap.height())
-
+            print(f"***Mouse Pressed***\nmap width: {map.width()}\nmap height: {map.height()}\n")
+            
             row = int((event.y() / self.CellHeight))
             col = int((event.x() / self.CellWidth))
             cell = row * self.GridWidth + col
@@ -138,8 +161,9 @@ class CollisionEditor(QWidget):
 
             if self.SelectedCell > (self.GridHeight * self.GridWidth):
                 self.SelectedCell = None
-                self.drawCollisions()
+                self.drawCollision(map)
                 return
 
             self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell]))
-            self.drawCollisions()
+            self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell]))
+            self.drawCollision(map)

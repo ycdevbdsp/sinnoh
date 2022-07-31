@@ -297,8 +297,8 @@ class Overworld(QMainWindow):
         if self.CellHeight == 0:
             return
 
-        x = floor(event.x() / self.ui.uiMap.width())
-        y = floor(event.y() / self.ui.uiMap.height())
+        x = floor(event.x() / map.width())
+        y = floor(event.y() / map.height())
 
         row = int((event.y() / self.CellHeight))
         col = int((event.x() / self.CellWidth))
@@ -306,9 +306,9 @@ class Overworld(QMainWindow):
 
         self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
 
-        if 1:
-            print(f"event.x({event.x()}), event.y({event.y()}); CellWidth({self.CellWidth}); CellHeight({self.CellHeight}); x({x})")
-            print(cell)
+        # if 1:
+        #     print(f"event.x({event.x()}), event.y({event.y()}); CellWidth({self.CellWidth}); CellHeight({self.CellHeight}); x({x})")
+        #     print(cell)
 
         self.SelectedCell = cell
 
@@ -317,7 +317,7 @@ class Overworld(QMainWindow):
             self.drawOverworld()
             return
 
-        print(f"Searching {self.SelectedCell}")
+        # print(f"Searching {self.SelectedCell}")
         if self.IsArrayed is True:
             self.ui.uiZoneID.setText(str(self.Sinnoh['ZoneIDs']['Array'][self.SelectedCell]))
             self.ui.uiAttributeFID.setText(str(self.SinnohAttribute['AttributeBlocks']['Array'][self.SelectedCell]['m_FileID']))
@@ -346,7 +346,7 @@ class Overworld(QMainWindow):
             return
         
         self.GridWidth = self.ui.uiWidthSB.value()
-        print("width changed")
+        # print("width changed")
         self.drawOverworld()
 
     def heightChanged(self):
@@ -399,7 +399,7 @@ class Overworld(QMainWindow):
         #Before we begin drawing the grid, if width x height exceeds the count of ZoneIDs
         #then we need to add new entries to the arrays of each file.
         
-        print(f"GridHeight({self.GridHeight}), GridWidth({self.GridWidth}) [{self.GridHeight*self.GridWidth}], len(zJson)({len(zJson)}")
+        # print(f"GridHeight({self.GridHeight}), GridWidth({self.GridWidth}) [{self.GridHeight*self.GridWidth}], len(zJson)({len(zJson)}")
         if self.GridHeight * self.GridWidth > len(zJson):
             for n in range(self.GridHeight*self.GridWidth - len(zJson)):
                 zJson.append(-1000)
@@ -415,7 +415,7 @@ class Overworld(QMainWindow):
             zAttrEX = zAttrEX[:-(len(zAttrEX) - (self.GridHeight * self.GridWidth))]
             zAttrEXSP = zAttrEXSP[:-(len(zAttrEXSP) - (self.GridHeight * self.GridWidth))]
 
-        print(f"zJson({len(zJson)}, zAttr({len(zAttr)}), zAttrSP({len(zAttrSP)}, zAttrEX({len(zAttrEX)}, zAttrEXSP({len(zAttrEXSP)})")
+        # print(f"zJson({len(zJson)}, zAttr({len(zAttr)}), zAttrSP({len(zAttrSP)}, zAttrEX({len(zAttrEX)}, zAttrEXSP({len(zAttrEXSP)})")
         
         if self.IsArrayed is True:
             self.Sinnoh['ZoneIDs']['Array'] = zJson
