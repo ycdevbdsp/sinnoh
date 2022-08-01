@@ -318,7 +318,7 @@
    </property>
    <item>
     <property name="text">
-     <string>NONE</string>
+     <string>UNKNOWN</string>
     </property>
    </item>
    <item>

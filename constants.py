@@ -14,7 +14,7 @@ SELECTED = QColor(255, 255, 0, 255)
 
 #COLLISION VALUES
 COLLISIONS = {
-    'NONE': -1,
+    'UNKNOWN': -1,
     'WALKABLE': 0,
     'WALL': 128,
     'GRASS': 2000,
@@ -34,7 +34,7 @@ COLLISIONS = {
     'MUD': 164000,
     'SNOW': 168000,
     'SINKSNOW': 161000,
-    -1: 'NONE',
+    -1: 'UNKNOWN',
     0: 'WALKABLE',
     128: 'WALL',
     2000: 'GRASS',

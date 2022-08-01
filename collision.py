@@ -155,7 +155,7 @@ class Ui_CollisionEditor(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("CollisionEditor", "Collision"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("CollisionEditor", "Ex Attributes"))
         self.label.setText(_translate("CollisionEditor", "Ex Attr"))
-        self.comboBoxCollisionTile.setItemText(0, _translate("CollisionEditor", "NONE"))
+        self.comboBoxCollisionTile.setItemText(0, _translate("CollisionEditor", "UNKNOWN"))
         self.comboBoxCollisionTile.setItemText(1, _translate("CollisionEditor", "WALKABLE"))
         self.comboBoxCollisionTile.setItemText(2, _translate("CollisionEditor", "WALL"))
         self.comboBoxCollisionTile.setItemText(3, _translate("CollisionEditor", "GRASS"))

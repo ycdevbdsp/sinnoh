@@ -24,6 +24,7 @@ class CollisionEditor(QWidget):
     Loading = True
     SelectedCell = None
     CellSize = None
+    UpdateTile = True
 
     def __init__(self, collisionData, exData, parent=None):
         super().__init__()
@@ -50,7 +51,7 @@ class CollisionEditor(QWidget):
         self.Loading = False
 
     def collisionTileChanged(self):
-        if self.SelectedCell == None:
+        if self.SelectedCell == None or (not self.UpdateTile):
             return
         
         cell = self.SelectedCell['cell']
@@ -58,6 +59,7 @@ class CollisionEditor(QWidget):
 
         if self.SelectedCell['map'] == self.ui.uiColMap:
             self.CollisionData['Attributes'][cell] = COLLISIONS[tile]
+            self.ui.uiColValue.setText(str(COLLISIONS[tile]))
         elif self.SelectedCell['map'] == self.ui.uiColExMap:
             self.ExData['Attributes'][cell] = COLLISIONS[tile]
 
@@ -166,7 +168,7 @@ class CollisionEditor(QWidget):
 
             if self.CellHeight == 0:
                 return
-            print(f"***Mouse Pressed***\nmap width: {map.width()}\nmap height: {map.height()}\n")
+            #print(f"***Mouse Pressed***\nmap width: {map.width()}\nmap height: {map.height()}\n")
             
             row = int((event.y() / self.CellHeight))
             col = int((event.x() / self.CellWidth))
@@ -185,7 +187,14 @@ class CollisionEditor(QWidget):
 
             self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell['cell']]))
             self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell['cell']]))
-            self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[self.CollisionData['Attributes'][self.SelectedCell['cell']]])
+
+            if not (COLLISIONS.get(self.CollisionData['Attributes'][self.SelectedCell['cell']])) is None:
+                self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[self.CollisionData['Attributes'][self.SelectedCell['cell']]])
+            else:
+                self.UpdateTile = False
+                self.ui.comboBoxCollisionTile.setCurrentText("UNKNOWN")
+                self.UpdateTile = True
+
             self.drawCollision(map)
 
     def saveMatrix(self):
