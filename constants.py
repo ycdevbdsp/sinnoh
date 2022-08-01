@@ -18,7 +18,7 @@ COLLISIONS = {
     'WALKABLE': 0,
     'WALL': 128,
     'GRASS': 2000,
-    'TALL GRASS': 3000,
+    'TALLGRASS': 3000,
     'GRASS2': 4000,
     'GRASS3': 5000,
     'PONDWATER': 16000,
