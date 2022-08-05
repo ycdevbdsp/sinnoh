@@ -13,92 +13,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QSpinBox" name="uiColHeightSB">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>160</y>
-     <width>42</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="colValueLabel">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>71</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Attribute</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="colHeightLabel">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>150</y>
-     <width>47</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Height</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="colWidthLabel">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>122</y>
-     <width>47</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Width</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="uiColValue">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>70</y>
-     <width>111</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="uiColWidthSB">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>130</y>
-     <width>42</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnColSaveMatrix">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>220</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Save Matrix</string>
-   </property>
-  </widget>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>10</x>
      <y>10</y>
      <width>901</width>
      <height>921</height>
@@ -113,24 +31,24 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab">
+   <widget class="QWidget" name="tabEvents">
     <attribute name="title">
-     <string>Collision</string>
+     <string>Events</string>
     </attribute>
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QScrollArea" name="scrollArea_3">
      <property name="geometry">
       <rect>
        <x>9</x>
        <y>9</y>
-       <width>881</width>
-       <height>881</height>
+       <width>524</width>
+       <height>524</height>
       </rect>
      </property>
      <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustIgnored</enum>
@@ -141,13 +59,371 @@
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>522</width>
+        <height>522</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="ClickLabel" name="uiEventsMap">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="formLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>10</y>
+       <width>213</width>
+       <height>595</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="labelAlignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="iDLabel">
+        <property name="text">
+         <string>ID:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="pdID"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="trainerIDLabel">
+        <property name="text">
+         <string>TrainerID:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="pdTrainerID"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="oGILabel">
+        <property name="text">
+         <string>OGI:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="pdOGI"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="positionXLabel">
+        <property name="text">
+         <string>PositionX:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="pdPositionX">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="positionYLabel">
+        <property name="text">
+         <string>PositionY:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="pdPositionY">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="heightLayerLabel">
+        <property name="text">
+         <string>Height Layer:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="pdHeightLayer"/>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="rotationLabel">
+        <property name="text">
+         <string>Rotation:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="pdRotation"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="moveLimitXLabel">
+        <property name="text">
+         <string>Move Limit X:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QSpinBox" name="pdMoveLimitX">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="moveLimitYLabel">
+        <property name="text">
+         <string>Move Limit Y:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QSpinBox" name="pdMoveLimitY">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="moveCodeLabel">
+        <property name="text">
+         <string>Move Code:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QLineEdit" name="pdMoveCode"/>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="moveParam0Label">
+        <property name="text">
+         <string>Move Param 0:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLineEdit" name="pdMoveParam0"/>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="moveParam1Label">
+        <property name="text">
+         <string>Move Param 1:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QLineEdit" name="pdMoveParam1"/>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="moveParam2Label">
+        <property name="text">
+         <string>Move Param 2:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QLineEdit" name="pdMoveParam2"/>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="talkLabelLabel">
+        <property name="text">
+         <string>Talk Label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QLineEdit" name="pdTalkLabel"/>
+      </item>
+      <item row="14" column="0">
+       <widget class="QLabel" name="contactLabelLabel">
+        <property name="text">
+         <string>Contact Label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="1">
+       <widget class="QLineEdit" name="pdContactLabel"/>
+      </item>
+      <item row="15" column="0">
+       <widget class="QLabel" name="workLabel">
+        <property name="text">
+         <string>Work:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="1">
+       <widget class="QLineEdit" name="pdWork"/>
+      </item>
+      <item row="16" column="0">
+       <widget class="QLabel" name="dowsingLabel">
+        <property name="text">
+         <string>Dowsing:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="1">
+       <widget class="QLineEdit" name="pdDowsing"/>
+      </item>
+      <item row="17" column="0">
+       <widget class="QLabel" name="loadFirstLabel">
+        <property name="text">
+         <string>Load First:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="1">
+       <widget class="QCheckBox" name="pdLoadFirst"/>
+      </item>
+      <item row="18" column="0">
+       <widget class="QLabel" name="doNotLoadLabel">
+        <property name="text">
+         <string>DoNotLoad:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="18" column="1">
+       <widget class="QLineEdit" name="pdDoNotLoad"/>
+      </item>
+      <item row="19" column="0">
+       <widget class="QLabel" name="talkToRangeLabel">
+        <property name="text">
+         <string>Talk To Range:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="19" column="1">
+       <widget class="QLineEdit" name="pdTalkToRange"/>
+      </item>
+      <item row="20" column="0">
+       <widget class="QLabel" name="talkToSizeXLabel">
+        <property name="text">
+         <string>Talk To SizeX:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="20" column="1">
+       <widget class="QLineEdit" name="pdTalkToSizeX"/>
+      </item>
+      <item row="21" column="0">
+       <widget class="QLabel" name="talkToSizeYLabel">
+        <property name="text">
+         <string>Talk To SizeY:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="21" column="1">
+       <widget class="QLineEdit" name="pdTalkToSizeY"/>
+      </item>
+      <item row="22" column="0">
+       <widget class="QLabel" name="talkBitLabel">
+        <property name="text">
+         <string>Talk Bit:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="22" column="1">
+       <widget class="QLineEdit" name="pdTalkBit"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tabCollision">
+    <attribute name="title">
+     <string>Collision</string>
+    </attribute>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="geometry">
+      <rect>
+       <x>9</x>
+       <y>9</y>
+       <width>524</width>
+       <height>524</height>
+      </rect>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustIgnored</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
      <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>879</width>
-        <height>879</height>
+        <width>522</width>
+        <height>522</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -158,10 +434,10 @@
         <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>15</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>15</number>
+        <number>5</number>
        </property>
        <item>
         <widget class="ClickLabel" name="uiColMap">
@@ -197,8 +473,285 @@
       </layout>
      </widget>
     </widget>
+    <widget class="QLineEdit" name="uiColValue">
+     <property name="geometry">
+      <rect>
+       <x>620</x>
+       <y>50</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="colHeightLabel">
+     <property name="geometry">
+      <rect>
+       <x>790</x>
+       <y>50</y>
+       <width>47</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Height</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="colValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>50</y>
+       <width>43</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Attribute</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="uiColHeightSB">
+     <property name="geometry">
+      <rect>
+       <x>830</x>
+       <y>60</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="colWidthLabel">
+     <property name="geometry">
+      <rect>
+       <x>790</x>
+       <y>22</y>
+       <width>47</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Width</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="uiColWidthSB">
+     <property name="geometry">
+      <rect>
+       <x>830</x>
+       <y>30</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>80</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Collision Tile</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBoxCollisionTile">
+     <property name="geometry">
+      <rect>
+       <x>620</x>
+       <y>80</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>UNKNOWN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WALKABLE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WALL</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TALLGRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GRASS2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GRASS3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PONDWATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>OCEANWATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PUDDLE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WALKABLEWATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PUDDLE2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SAND</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LEDGERIGHT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LEDGELEFT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LEDGEDOWN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LEDGEDOWNLEFT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ROCKCLIMBVERT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ROCKCLIMBHORI</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>???</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DOOR?</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PASSAGELEFT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PASSAGERIGHT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PASSAGEDOWN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TREEENTER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRIDGESTART?</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRDGOVRGRND</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRDGOVRWATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BIKELEDGERIDE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BIKELEDGEHORI</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BERRYSOIL</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SINKSNOW</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SINKSNOWPRMTR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MUD</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SNOW</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GRASSINSNOW</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BIKERACK</string>
+      </property>
+     </item>
+    </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="tabExAttributes">
     <attribute name="title">
      <string>Ex Attributes</string>
     </attribute>
@@ -207,15 +760,15 @@
       <rect>
        <x>9</x>
        <y>9</y>
-       <width>881</width>
-       <height>881</height>
+       <width>524</width>
+       <height>524</height>
       </rect>
      </property>
      <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustIgnored</enum>
@@ -231,8 +784,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>879</width>
-        <height>879</height>
+        <width>522</width>
+        <height>522</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -243,10 +796,10 @@
         <number>5</number>
        </property>
        <property name="rightMargin">
-        <number>15</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
-        <number>15</number>
+        <number>5</number>
        </property>
        <item>
         <widget class="ClickLabel" name="uiColExMap">
@@ -282,152 +835,42 @@
       </layout>
      </widget>
     </widget>
+    <widget class="QLineEdit" name="uiColExValue">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>20</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>20</y>
+       <width>51</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ex Attr</string>
+     </property>
+    </widget>
    </widget>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QPushButton" name="btnColSaveMatrix">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>40</y>
-     <width>51</width>
-     <height>20</height>
+     <x>920</x>
+     <y>30</y>
+     <width>75</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>Ex Attr</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="uiColExValue">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>40</y>
-     <width>111</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBoxCollisionTile">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>100</y>
-     <width>111</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>UNKNOWN</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>WALKABLE</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>WALL</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>GRASS</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>TALLGRASS</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>GRASS2</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>GRASS3</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>PONDWATER</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>OCEANWATER</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>PUDDLE</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>PUDDLE2</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>LEDGELEFT</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>LEDGEDOWN</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>LEDGEDOWNLEFT</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>DOOR?</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>BIKELEDGESTART</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>BIKELEDGERIDE</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>SINKSNOW</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>MUD</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>SNOW</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>61</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Collision Tile</string>
+    <string>Save Matrix</string>
    </property>
   </widget>
  </widget>

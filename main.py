@@ -32,6 +32,8 @@ class Overworld(QMainWindow):
     Loading = False
     SelectedCell = None
     CellMatrix = {}
+    Masterdatas = {}
+    PlaceDatas = {}
     Sinnoh = None
     SinnohAttribute = None
     SinnohAttribute_sp = None
@@ -50,9 +52,12 @@ class Overworld(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.uiMap.clicked.connect(self.mousePressed)
+        self.ui.uiMap.overworld = True
+        self.ui.uiMap.clicked.connect(self.cellClicked)
+        self.ui.uiMap.doubleclicked.connect(self.cellDoubleClicked)
         self.resized.connect(self.repaintUI)
-        self.ui.actionLoad.triggered.connect(self.loadGameSettings)
+        # self.ui.actionLoad.triggered.connect(self.loadGameSettings)
+        self.ui.actionLoad.triggered.connect(self.loadRomFS)
         self.uiMapRatios = {
             'w': self.ui.uiMap.width() / self.width(),
             'h': self.ui.uiMap.height() / self.height()
@@ -63,50 +68,7 @@ class Overworld(QMainWindow):
         self.ui.btnSaveMatrix.clicked.connect(self.saveMatrix)
         self.ui.btnEditCollision.clicked.connect(self.openCollisionEditor)
 
-    def loadGameSettings(self):
-        root = Tk()
-        root.withdraw()
-        gamesettings = filedialog.askopenfilename()
-        attributesList = []
-        attributesExList = []
-
-        if path.exists("gamesettings_unpackedmaps"):
-            print("ready")
-        else:
-            env = UnityPy.load(gamesettings)
-
-            for i in tqdm(range(len(env.objects))):
-                obj = env.objects[i]
-                if obj.type.name == "MonoBehaviour":
-                    tree = env.objects[i].read_typetree()
-
-                    if re.search(r'map[0-9]*_[0-9]*.*', tree['m_Name']):
-                        #tree['Attributes'] has what we need, but save the whole tree file
-                        self.CollisionTrees[tree['m_Name']] = tree
-                        
-                        #Commented out but retained for debugging purposes.    
-                        # if 0:
-                        # for at in tree['Attributes']:
-                        #     if '_Ex' not in tree['m_Name'] and at not in attributesList:
-                        #         attributesList.append(at)
-                        #     elif '_Ex' in tree['m_Name'] and at not in attributesExList:
-                        #         attributesExList.append(at)
-                        
-                    elif tree['m_Name'] in self.MapMatrixGroup:
-                        if tree['m_Name'] == "Sinnoh":
-                            self.Sinnoh = tree
-                        elif tree['m_Name'] == "SinnohAttribute":
-                            self.SinnohAttribute = tree
-                        elif tree['m_Name'] == "SinnohAttribute_Ex":
-                            self.SinnohAttribute_Ex = tree
-                        elif tree['m_Name'] == "SinnohAttribute_Ex_sp":
-                            self.SinnohAttribute_Ex_sp = tree
-                        elif tree['m_Name'] == "SinnohAttribute_sp":
-                            self.SinnohAttribute_sp = tree
-                    
-            #Save the collision trees and sinnoh matrix files to disk for faster loading later.    
-
-
+    def initializeOverworldMatrix(self):
         #Commented out but retained for debugging purposes.    
         # if 0:
         #     with open('attributesList.json', 'w+') as af:
@@ -135,86 +97,131 @@ class Overworld(QMainWindow):
 
         self.ui.uiHeightSB.setValue(self.GridHeight)
 
-        self.Loading = False
-        self.drawOverworld()
 
-
-    def loadData(self):
+    def loadRomFS(self):
         root = Tk()
         root.withdraw()
-        selectedFolder = filedialog.askdirectory()
-        foundData = False
-        missing = ""
+        romfs = filedialog.askdirectory()
+        unpackGameSettings = False
+        unpackMasterData = False
+        dprPath = f"StreamingAssets/AssetAssistant/Dpr"
+        mdPath = f"{dprPath}/masterdatas"
+        gsPath = f"{dprPath}/scriptableobjects/gamesettings"
 
-        self.Loading = True
+        #Look for unpacked masterdatas
 
-        #check for all 5 map attribute files:
-        #sinnoh.json
-        if path.exists(f"{selectedFolder}/sinnoh.json"):
-            input = open(f"{selectedFolder}/sinnoh.json")
-            self.Sinnoh = json.load(input)
-        else:
-            missing = f"sinnoh.json\n"
+        if path.exists(f"{romfs}_unpacked"):
+            ret = QMessageBox.question(self, '', "Unpacked data has been found. Do you want to load it instead?", QMessageBox.Yes, QMessageBox.No)
 
-        
-        #sinnohAttribute.json
-        if path.exists(f"{selectedFolder}/sinnohAttribute.json"):
-            input = open(f"{selectedFolder}/sinnohAttribute.json")
-            self.SinnohAttribute = json.load(input)
-        else:
-            missing = f"{missing}sinnohAttribute.json\n"
+            if ret == QMessageBox.Yes:
+                #Load masterdata already unpacked to disc
 
-        #sinnohAttribute_sp.json
-        if path.exists(f"{selectedFolder}/sinnohAttribute_sp.json"):
-            input = open(f"{selectedFolder}/sinnohAttribute_sp.json")
-            self.SinnohAttribute_sp = json.load(input)
-        else:
-            missing = f"{missing}sinnohAttribute_sp.json\n"
-        
-        #sinnohAttribute_Ex.json
-        if path.exists(f"{selectedFolder}/sinnohAttribute_Ex.json"):
-            input = open(f"{selectedFolder}/sinnohAttribute_Ex.json")
-            self.SinnohAttribute_Ex = json.load(input)
-        else:
-            missing = f"{missing}sinnohAttribute_Ex.json\n"
-        
-        #sinnohAttribute_Ex_sp.json
-        if path.exists(f"{selectedFolder}/sinnohAttribute_Ex_sp.json"):
-            input = open(f"{selectedFolder}/sinnohAttribute_Ex_sp.json")
-            self.SinnohAttribute_Ex_sp = json.load(input)
-        else:
-            missing = f"{missing}sinnohAttribute_Ex_sp.json\n"
+                if path.exists(f"{romfs}_unpacked/{mdPath}"):
+                    for filename in os.listdir(f"{romfs}_unpacked/{mdPath}"):
+                        if re.search(r"PlaceData_", filename):
+                            filePath = os.path.join(f"{romfs}_unpacked/{mdPath}/{filename}")
+
+                            f = json.load(open(filePath))
+                            
+                            for pd in f['Data']:
+                                if self.PlaceDatas.get(pd['zoneID']) is None:
+                                    self.PlaceDatas[pd['zoneID']] = {}
+                                
+                                self.PlaceDatas[pd['zoneID']][pd['ID']] = pd
+                                print(self.PlaceDatas[pd['zoneID']][pd['ID']])
+                else:
+                    unpackMasterData = True
+                
+                if path.exists(f"{romfs}_unpacked/{gsPath}"):
+                    for filename in os.listdir(f"{romfs}_unpacked/{gsPath}"):
+                        thePath = os.path.join(f"{romfs}_unpacked/{gsPath}/{filename}")
+                        if filename.lower() == "sinnoh":
+                            input = open(thePath)
+                            self.Sinnoh = json.load(input)
+                        elif filename.lower() == "sinnohattribute":
+                            input = open(thePath)
+                            self.SinnohAttribute = json.load(input)
+                        elif filename.lower() == "sinnohattribute_ex":
+                            input = open(thePath)
+                            self.SinnohAttribute_Ex = json.load(input)
+                        elif filename.lower() == "sinnohattribute_sp":
+                            input = open(thePath)
+                            self.SinnohAttribute_sp = json.load(input)
+                        elif filename.lower() == "sinnohattribute_ex_sp":
+                            input = open(thePath)
+                            self.SinnohAttribute_Ex_sp = json.load(input)
+                else:
+                    unpackGameSettings = True
+            else:
+                unpackMasterData = True
+                unpackGameSettings = True
+                
+        #Look for masterdatas and gamesettings
+
+        if unpackMasterData and path.exists(f"{romfs}/{mdPath}"):
+            masterdatas = UnityPy.load(f"{romfs}/{mdPath}")
+            
+            if path.exists(f"{romfs}_unpacked/{mdPath}") is False:
+                        os.makedirs(f"{romfs}_unpacked/{mdPath}")
+
+            for i in tqdm(range(len(masterdatas.objects))):
+                obj = masterdatas.objects[i]
+                if obj.type.name == "MonoBehaviour":
+                    tree = masterdatas.objects[i].read_typetree()
+
+                    with open(f"{romfs}_unpacked/{mdPath}/{tree['m_Name']}", 'w+') as out:
+                        json.dump(tree, out)
+
+                    if re.search(r"PlaceData_", tree['m_Name']):
+                        #This is a placedata. Search through it's Data array and mark every unique
+                        #zoneID found. Use the zoneID to mark its place in the PlaceDatas list.
+                        
+                        for pd in tree['Data']:
+                            if self.PlaceDatas.get(pd['zoneID']) is None:
+                                self.PlaceDatas[pd['zoneID']] = {}
+
+                            self.PlaceDatas[pd['zoneID']][pd['ID']] = pd
 
 
-        #Any files missing?
-        if len(missing) > 0:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Critical)
-            msg.setText(f"Missing files:\n{missing}")
-            msg.setWindowTitle("Missing Data")
-            msg.exec_()
-            return
+        if unpackGameSettings and path.exists(f"{romfs}/{gsPath}"):
+            gamesettings = UnityPy.load(f"{romfs}/{gsPath}")
 
-        self.GridWidth = self.Sinnoh['Width']
+            if path.exists(f"{romfs}_unpacked/{gsPath}") is False:
+                        os.makedirs(f"{romfs}_unpacked/{gsPath}")
 
-        if 'Array' in self.Sinnoh['ZoneIDs']:
-            zoneIDCount = len(self.Sinnoh['ZoneIDs']['Array'])
-            self.IsArrayed = True
-        else:
-            zoneIDCount = len(self.Sinnoh['ZoneIDs'])
-            self.IsArrayed = False
+            for i in tqdm(range(len(gamesettings.objects))):
+                obj = gamesettings.objects[i]
+                if obj.type.name == "MonoBehaviour":
+                    tree = gamesettings.objects[i].read_typetree()
 
-        self.GridHeight = int(zoneIDCount / self.GridWidth)
+                    if re.search(r'map[0-9]*_[0-9]*.*', tree['m_Name']):
+                        #tree['Attributes'] has what we need, but save the whole tree file
+                        self.CollisionTrees[tree['m_Name']] = tree
+                        
+                        #Commented out but retained for debugging purposes.    
+                        # if 0:
+                        # for at in tree['Attributes']:
+                        #     if '_Ex' not in tree['m_Name'] and at not in attributesList:
+                        #         attributesList.append(at)
+                        #     elif '_Ex' in tree['m_Name'] and at not in attributesExList:
+                        #         attributesExList.append(at)
+                        
+                    elif tree['m_Name'] in self.MapMatrixGroup:
+                        if tree['m_Name'] == "Sinnoh":
+                            self.Sinnoh = tree
+                        elif tree['m_Name'] == "SinnohAttribute":
+                            self.SinnohAttribute = tree
+                        elif tree['m_Name'] == "SinnohAttribute_Ex":
+                            self.SinnohAttribute_Ex = tree
+                        elif tree['m_Name'] == "SinnohAttribute_Ex_sp":
+                            self.SinnohAttribute_Ex_sp = tree
+                        elif tree['m_Name'] == "SinnohAttribute_sp":
+                            self.SinnohAttribute_sp = tree
+                    
+                    with open(f"{romfs}_unpacked/{gsPath}/{tree['m_Name']}", 'w+') as out:
+                        json.dump(tree, out)
 
-        #Set the width and height in the spinboxes
-
-        self.ui.uiWidthSB.setValue(self.GridWidth)
-
-        if zoneIDCount % self.GridWidth > 0:
-            self.GridHeight += 1
-
-        self.ui.uiHeightSB.setValue(self.GridHeight)
-
+        self.initializeOverworldMatrix()
         self.Loading = False
         self.drawOverworld()
 
@@ -234,7 +241,8 @@ class Overworld(QMainWindow):
 
         collisionData = self.CollisionTrees[colFileName]
         exAttributeData = self.CollisionTrees[exFileName]
-        self.CollisionEditor = CollisionEditor(collisionData, exAttributeData)
+        placeData = self.PlaceDatas.get(self.Sinnoh['ZoneIDs'][self.SelectedCell])
+        self.CollisionEditor = CollisionEditor(collisionData, exAttributeData, placeData, self.CellMatrix)
         self.CollisionEditor.show()
 
 
@@ -301,31 +309,8 @@ class Overworld(QMainWindow):
         with open(f"{outDir}\SinnohAttribute_Ex_sp.json", 'w+') as of:
             json.dump(self.SinnohAttribute_Ex_sp, of)
 
-    def mousePressed(self, event, map):
-        self.SelectedCell = None
-
-        if self.CellHeight == 0:
-            return
-
-        x = floor(event.x() / map.width())
-        y = floor(event.y() / map.height())
-
-        row = int((event.y() / self.CellHeight))
-        col = int((event.x() / self.CellWidth))
-        cell = row * self.GridWidth + col
-
-        self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
-
-        # if 1:
-        #     print(f"event.x({event.x()}), event.y({event.y()}); CellWidth({self.CellWidth}); CellHeight({self.CellHeight}); x({x})")
-        #     print(cell)
-
-        self.SelectedCell = cell
-
-        if self.SelectedCell > (self.GridHeight * self.GridWidth):
-            self.SelectedCell = None
-            self.drawOverworld()
-            return
+    def cellClicked(self, event, map):
+        self.setSelectedCell(event)
 
         # print(f"Searching {self.SelectedCell}")
         if self.IsArrayed is True:
@@ -350,6 +335,29 @@ class Overworld(QMainWindow):
             self.ui.uiAttributeEXSPPID.setText(str(self.SinnohAttribute_Ex_sp['AttributeBlocks'][self.SelectedCell]['m_PathID']))
     
         self.drawOverworld()
+
+    def cellDoubleClicked(self, event, map):
+        self.setSelectedCell(event)
+        self.openCollisionEditor()
+    
+    def setSelectedCell(self, event):
+        self.SelectedCell = None
+
+        if self.CellHeight == 0:
+            return
+
+        row = int((event.y() / self.CellHeight))
+        col = int((event.x() / self.CellWidth))
+        cell = row * self.GridWidth + col
+
+        self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
+
+        self.SelectedCell = cell
+
+        if self.SelectedCell > (self.GridHeight * self.GridWidth):
+            self.SelectedCell = None
+            self.drawOverworld()        
+
 
     def widthChanged(self):
         if self.Loading is True:

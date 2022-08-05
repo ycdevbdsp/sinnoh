@@ -38,3 +38,5 @@ mapout/*
 maps/*
 dist/*
 build/build/BDSPMME.pkg
+testpd.json
+testpd2.json
