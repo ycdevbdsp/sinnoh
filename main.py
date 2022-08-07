@@ -7,6 +7,7 @@ import json
 from tqdm import tqdm
 from map import *
 from math import floor
+from subprocess import run
 from tkinter import filedialog
 from tkinter import *
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QWidget
@@ -15,7 +16,7 @@ from PyQt5.QtCore import Qt, QSize, QRectF
 import clicklabel
 from collisioneditor import CollisionEditor
 import collisionHeader
-
+import zones
     
 
 class Overworld(QMainWindow):
@@ -39,6 +40,12 @@ class Overworld(QMainWindow):
     SinnohAttribute_sp = None
     SinnohAttribute_Ex = None
     SinnohAttribute_Ex_sp = None
+
+    #FILEPATHS
+
+    ROMFS_PATH = ""
+    UNPK_ROMFS_PATH = ""
+    DPR_PATH = "StreamingAssets/AssetAssistant/Dpr"
 
     MapMatrixGroup = [
         "Sinnoh",
@@ -104,10 +111,14 @@ class Overworld(QMainWindow):
         romfs = filedialog.askdirectory()
         unpackGameSettings = False
         unpackMasterData = False
-        dprPath = f"StreamingAssets/AssetAssistant/Dpr"
-        mdPath = f"{dprPath}/masterdatas"
-        gsPath = f"{dprPath}/scriptableobjects/gamesettings"
+        unpackEvScript = False
+        mdPath = f"{self.DPR_PATH}/masterdatas"
+        gsPath = f"{self.DPR_PATH}/scriptableobjects/gamesettings"
+        evPath = f"{self.DPR_PATH}/ev_script"
 
+        self.ROMFS_PATH = romfs
+        self.UNPK_ROMFS_PATH = f"{romfs}_unpacked"
+        
         #Look for unpacked masterdatas
 
         if path.exists(f"{romfs}_unpacked"):
@@ -128,7 +139,6 @@ class Overworld(QMainWindow):
                                     self.PlaceDatas[pd['zoneID']] = {}
                                 
                                 self.PlaceDatas[pd['zoneID']][pd['ID']] = pd
-                                print(self.PlaceDatas[pd['zoneID']][pd['ID']])
                 else:
                     unpackMasterData = True
                 
@@ -152,9 +162,16 @@ class Overworld(QMainWindow):
                             self.SinnohAttribute_Ex_sp = json.load(input)
                 else:
                     unpackGameSettings = True
+
+                if path.exists(f"{romfs}_unpacked/{evPath}"):
+                    for filename in os.listdir(f"{romfs}_unpacked/{evPath}"):
+                        thePath = os.path.join(f"{romfs}_unpacked/{evPath}/{filename}")
+                else:
+                    unpackEvScript = True
             else:
                 unpackMasterData = True
                 unpackGameSettings = True
+                unpackEvScript = True
                 
         #Look for masterdatas and gamesettings
 
@@ -221,11 +238,21 @@ class Overworld(QMainWindow):
                     with open(f"{romfs}_unpacked/{gsPath}/{tree['m_Name']}", 'w+') as out:
                         json.dump(tree, out)
 
+        if unpackEvScript and path.exists(f"{romfs}/{evPath}"):
+            QMessageBox.information(self, '', "Please choose the location of ev-as.")
+            root = Tk()
+            root.withdraw()
+            evas = filedialog.askdirectory()
+
+            run(f"\"{evas}/ev_parse.exe\" -i \"{romfs}/{evPath}\" -o \"{romfs}_unpacked/{evPath}\"")
+
+            QMessageBox.information(self, '', f"Parsed scripts to {romfs}/{evPath}")
+
         self.initializeOverworldMatrix()
         self.Loading = False
         self.drawOverworld()
 
-    def openCollisionEditor(self):
+    def openCollisionEditor(self, zoneID):
         colFileName = f"map{self.CellMatrix['col']}_{self.CellMatrix['row']}"
         exFileName = f"{colFileName}_Ex"
 
@@ -242,7 +269,9 @@ class Overworld(QMainWindow):
         collisionData = self.CollisionTrees[colFileName]
         exAttributeData = self.CollisionTrees[exFileName]
         placeData = self.PlaceDatas.get(self.Sinnoh['ZoneIDs'][self.SelectedCell])
-        self.CollisionEditor = CollisionEditor(collisionData, exAttributeData, placeData, self.CellMatrix)
+
+        filePaths = { 'romfs': self.ROMFS_PATH, 'romfs_unpacked': self.UNPK_ROMFS_PATH, 'dpr': self.DPR_PATH }
+        self.CollisionEditor = CollisionEditor(collisionData, exAttributeData, placeData, self.CellMatrix, zoneID, filePaths)
         self.CollisionEditor.show()
 
 
@@ -338,7 +367,7 @@ class Overworld(QMainWindow):
 
     def cellDoubleClicked(self, event, map):
         self.setSelectedCell(event)
-        self.openCollisionEditor()
+        self.openCollisionEditor(self.Sinnoh['ZoneIDs'][self.SelectedCell])
     
     def setSelectedCell(self, event):
         self.SelectedCell = None
@@ -364,13 +393,12 @@ class Overworld(QMainWindow):
             return
         
         self.GridWidth = self.ui.uiWidthSB.value()
-        # print("width changed")
         self.drawOverworld()
 
     def heightChanged(self):
         if self.Loading is True:
             return
-        print(self.ui.uiHeightSB.value())
+            
         self.GridHeight = self.ui.uiHeightSB.value()
         self.drawOverworld()
 

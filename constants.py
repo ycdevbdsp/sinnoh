@@ -1,7 +1,12 @@
 from PyQt5.QtGui import QColor
 
+#MAP EXTENT VALUES
+MAP_WIDTH = 32
+MAP_HEIGHT = 32
+
 #COLORS
 alpha = int(255*0.25)
+GRIDLINE = QColor(0, 0, 0)
 BLACK = QColor(0, 0, 0, alpha)
 BLUE = QColor(0, 255, 247, alpha)
 GREEN = QColor(0, 255, 0, alpha)
@@ -90,4 +95,56 @@ COLLISIONS = {
     168000: 'SNOW',
     169000: 'GRASSINSNOW',
     219128: 'BIKERACK'
+}
+
+PLACEDATA_NEW = {
+    "ID": "",
+    "zoneID": 0,
+    "TrainerID": 0,
+    "ObjectGraphicIndex": 1,
+    "ColorIndex": 0,
+    "Position": {
+        "x": 0,
+        "y": 0
+    },
+    "HeightLayer": 1,
+    "HeightIgnore": 0,
+    "Size": {
+        "x": 0,
+        "y": 0
+    },
+    "Rotation": 90,
+    "MoveLimit": {
+        "x": 1,
+        "y": 0
+    },
+    "EventType": 0,
+    "MoveCode": 3,
+    "MoveParam0": 0,
+    "MoveParam1": 0,
+    "MoveParam2": 0,
+    "TalkLabel": "",
+    "ContactLabel": "",
+    "Work": 4000,
+    "Dowsing": 0,
+    "LoadFirst": 0,
+    "DoNotLoad": 4000,
+    "TalkToRange": 1.25,
+    "TalkToSize": {
+        "x": 0,
+        "y": 0
+    },
+    "TalkBit": 15
+}
+
+ROTATION_UP = 180
+ROTATION_DOWN = 0
+ROTATION_LEFT = 90
+ROTATION_RIGHT = 270
+
+ROTATION = {
+    0: "DOWN",
+    90: "LEFT",
+    180: "UP",
+    270: "RIGHT"
 }

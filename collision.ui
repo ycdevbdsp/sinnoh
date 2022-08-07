@@ -121,7 +121,7 @@
        <x>550</x>
        <y>10</y>
        <width>213</width>
-       <height>595</height>
+       <height>614</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout">
@@ -182,6 +182,9 @@
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="maximum">
+         <number>999</number>
+        </property>
        </widget>
       </item>
       <item row="4" column="0">
@@ -196,6 +199,9 @@
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="maximum">
+         <number>999</number>
+        </property>
        </widget>
       </item>
       <item row="5" column="0">
@@ -209,14 +215,35 @@
        <widget class="QLineEdit" name="pdHeightLayer"/>
       </item>
       <item row="6" column="0">
-       <widget class="QLabel" name="rotationLabel">
+       <widget class="QLabel" name="rotationLabel_2">
         <property name="text">
          <string>Rotation:</string>
         </property>
        </widget>
       </item>
       <item row="6" column="1">
-       <widget class="QLineEdit" name="pdRotation"/>
+       <widget class="QComboBox" name="pdRotation">
+        <item>
+         <property name="text">
+          <string>UP</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DOWN</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>LEFT</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>RIGHT</string>
+         </property>
+        </item>
+       </widget>
       </item>
       <item row="7" column="0">
        <widget class="QLabel" name="moveLimitXLabel">
@@ -229,6 +256,9 @@
        <widget class="QSpinBox" name="pdMoveLimitX">
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+        <property name="maximum">
+         <number>999</number>
         </property>
        </widget>
       </item>
@@ -243,6 +273,9 @@
        <widget class="QSpinBox" name="pdMoveLimitY">
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+        <property name="maximum">
+         <number>999</number>
         </property>
        </widget>
       </item>
@@ -387,6 +420,29 @@
        <widget class="QLineEdit" name="pdTalkBit"/>
       </item>
      </layout>
+    </widget>
+    <widget class="QPlainTextEdit" name="uiEventsScript">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>620</y>
+       <width>751</width>
+       <height>181</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>600</y>
+       <width>47</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Script</string>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tabCollision">
