@@ -133,12 +133,17 @@ class Overworld(QMainWindow):
                             filePath = os.path.join(f"{romfs}_unpacked/{mdPath}/{filename}")
 
                             f = json.load(open(filePath))
-                            
+                            pdIndex = 0
+
                             for pd in f['Data']:
                                 if self.PlaceDatas.get(pd['zoneID']) is None:
-                                    self.PlaceDatas[pd['zoneID']] = {}
+                                    self.PlaceDatas[pd['zoneID']] = { "filename": filename }
                                 
-                                self.PlaceDatas[pd['zoneID']][pd['ID']] = pd
+                                self.PlaceDatas[pd['zoneID']][pd['ID']] = {
+                                    "index": pdIndex,
+                                    "data": pd
+                                }
+                                pdIndex += 1
                 else:
                     unpackMasterData = True
                 
@@ -193,11 +198,17 @@ class Overworld(QMainWindow):
                         #This is a placedata. Search through it's Data array and mark every unique
                         #zoneID found. Use the zoneID to mark its place in the PlaceDatas list.
                         
+                        pdIndex = 0
+
                         for pd in tree['Data']:
                             if self.PlaceDatas.get(pd['zoneID']) is None:
-                                self.PlaceDatas[pd['zoneID']] = {}
+                                self.PlaceDatas[pd['zoneID']] = { "filename": filename }
 
-                            self.PlaceDatas[pd['zoneID']][pd['ID']] = pd
+                            self.PlaceDatas[pd['zoneID']][pd['ID']] = {
+                                "index": pdIndex,
+                                "data": pd
+                            }
+                            pdIndex += 1
 
 
         if unpackGameSettings and path.exists(f"{romfs}/{gsPath}"):
@@ -273,6 +284,7 @@ class Overworld(QMainWindow):
         filePaths = { 'romfs': self.ROMFS_PATH, 'romfs_unpacked': self.UNPK_ROMFS_PATH, 'dpr': self.DPR_PATH }
         self.CollisionEditor = CollisionEditor(collisionData, exAttributeData, placeData, self.CellMatrix, zoneID, filePaths)
         self.CollisionEditor.show()
+        print('done showing')
 
 
     def saveCell(self):

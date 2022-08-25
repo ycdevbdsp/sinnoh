@@ -421,27 +421,66 @@
       </item>
      </layout>
     </widget>
-    <widget class="QPlainTextEdit" name="uiEventsScript">
+    <widget class="QTabWidget" name="tabWidget_2">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>620</y>
-       <width>751</width>
-       <height>181</height>
+       <x>0</x>
+       <y>610</y>
+       <width>761</width>
+       <height>191</height>
       </rect>
      </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Talk Script</string>
+      </attribute>
+      <widget class="QPlainTextEdit" name="uiEventsScript">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>751</width>
+         <height>161</height>
+        </rect>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Contact Script</string>
+      </attribute>
+      <widget class="QPlainTextEdit" name="uiEventsScriptContact">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>751</width>
+         <height>161</height>
+        </rect>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </widget>
     </widget>
-    <widget class="QLabel" name="label_3">
+    <widget class="QPushButton" name="btnSaveEvent">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>600</y>
-       <width>47</width>
-       <height>13</height>
+       <x>790</x>
+       <y>20</y>
+       <width>75</width>
+       <height>23</height>
       </rect>
      </property>
      <property name="text">
-      <string>Script</string>
+      <string>Save Event</string>
      </property>
     </widget>
    </widget>

@@ -56,6 +56,7 @@ class CollisionEditor(QWidget):
         self.ui.uiColHeightSB.valueChanged.connect(self.heightChanged)
         self.ui.uiColWidthSB.valueChanged.connect(self.widthChanged)
         self.ui.btnColSaveMatrix.clicked.connect(self.saveMatrix)
+        self.ui.btnSaveEvent.clicked.connect(self.saveEvent)
         self.ui.comboBoxCollisionTile.currentTextChanged.connect(self.collisionTileChanged)
         self.CollisionData = collisionData
         self.ExData = exData
@@ -250,6 +251,11 @@ class CollisionEditor(QWidget):
         
         for key in self.PlaceData:
             pd = self.PlaceData.get(key)
+            
+            #Just set the filename onto the title of the events window
+            if key == 'filename':
+                self.setWindowTitle(f"Events ({pd})")            
+                continue
 
             if self.CellSize is None:
                         self.CellSize = {}
@@ -259,8 +265,8 @@ class CollisionEditor(QWidget):
             cellWidth = floor(int(map.pixmap().width() / self.GridWidth))
             cellHeight = cellWidth
 
-            pdx = int(pd['Position']['x'] - (x * MAP_WIDTH)) * self.CellSize['width']
-            pdy = int(pd['Position']['y'] - (y * MAP_HEIGHT)) * self.CellSize['height']
+            pdx = int(pd['data']['Position']['x'] - (x * MAP_WIDTH)) * self.CellSize['width']
+            pdy = int(pd['data']['Position']['y'] - (y * MAP_HEIGHT)) * self.CellSize['height']
             pdIndex = f"{floor(pdx/self.CellSize['width'])}{floor(pdy/self.CellSize['height'])}"
             self.PlaceDataCells[pdIndex] = pd
 
@@ -344,8 +350,9 @@ class CollisionEditor(QWidget):
                 self.fillPlaceDataDetails(newCol, newRow, self.PlaceDataCells[f"{newCol}{newRow}"])
             else:
                 newPD = PLACEDATA_NEW
-                newPD['Position']['x'] = self.SELECTED_PLACEDATA_POS['x']
-                newPD['Position']['y'] = self.SELECTED_PLACEDATA_POS['y']
+                newPD['data']['Position']['x'] = self.SELECTED_PLACEDATA_POS['x']
+                newPD['data']['Position']['y'] = self.SELECTED_PLACEDATA_POS['y']
+                newPD['filename'] = self.PlaceData['filename']
                 self.fillPlaceDataDetails(newCol, newRow, newPD)
 
             self.drawOverworldEventMap(self.ui.uiEventsMap)
@@ -404,56 +411,70 @@ class CollisionEditor(QWidget):
         else:
             self.ui.uiEventsScript.setPlainText('')
             newPD = PLACEDATA_NEW
-            newPD['Position']['x'] = (int(self.MapOffsets['col'])*MAP_WIDTH + int(col))
-            newPD['Position']['y'] = (int(self.MapOffsets['row'])*MAP_HEIGHT + int(row))
-            self.fillPlaceDataDetails(col, row, PLACEDATA_NEW)
+            newPD['data']['Position']['x'] = (int(self.MapOffsets['col'])*MAP_WIDTH + int(col))
+            newPD['data']['Position']['y'] = (int(self.MapOffsets['row'])*MAP_HEIGHT + int(row))
+            newPD['filename'] = self.PlaceData['filename']
+            self.fillPlaceDataDetails(col, row, newPD)
 
         self.drawOverworldEventMap(map)
 
     def fillPlaceDataDetails(self, col, row, pd):
         script = ""
-        
-        if self.EV_SCRIPT.get(pd['TalkLabel']) is not None:
-            script = f"{self.EV_SCRIPT[pd['TalkLabel']][0]}"
+        contactScript = ""
 
-            for i in range(1, len(self.EV_SCRIPT[pd['TalkLabel']])):
-                script = f"{script}\n{self.EV_SCRIPT[pd['TalkLabel']][i]}"
+        if self.EV_SCRIPT.get(pd['data']['TalkLabel']) is not None:
+            script = f"{self.EV_SCRIPT[pd['data']['TalkLabel']][0]}"
+
+            for i in range(1, len(self.EV_SCRIPT[pd['data']['TalkLabel']])):
+                script = f"{script}\n{self.EV_SCRIPT[pd['data']['TalkLabel']][i]}"
+        
+        if self.EV_SCRIPT.get(pd['data']['ContactLabel']) is not None:
+            contactScript = f"{self.EV_SCRIPT[pd['data']['Contactlabel']][0]}"
+            for j in range(1, len(self.EV_SCRIPT[pd['data']['ContactLabel']])):
+                contactScript = f"{contactScript}\n{self.EV_SCRIPT[pd['data']['ContactLabel']][i]}"
                 
         self.ui.uiEventsScript.setPlainText(script)
+        self.ui.uiEventsScriptContact.setPlainText(contactScript)
 
-        self.ui.pdID.setText(pd['ID'])
-        self.ui.pdTrainerID.setText(str(pd['TrainerID']))
-        self.ui.pdOGI.setText(str(pd['ObjectGraphicIndex']))
-        self.ui.pdPositionX.setValue(int(pd['Position']['x']))
-        self.ui.pdPositionY.setValue(int(pd['Position']['y']))
-        self.ui.pdHeightLayer.setText(str(pd['HeightLayer']))
-        self.ui.pdRotation.setCurrentText(ROTATION[pd['Rotation']])
-        self.ui.pdMoveLimitX.setValue(int(pd['MoveLimit']['x']))
-        self.ui.pdMoveLimitY.setValue(int(pd['MoveLimit']['y']))
-        self.ui.pdMoveCode.setText (str(pd['MoveCode']))
-        self.ui.pdMoveParam0.setText(str(pd['MoveParam0']))
-        self.ui.pdMoveParam1.setText(str(pd['MoveParam1']))
-        self.ui.pdMoveParam2.setText(str(pd['MoveParam2']))
-        self.ui.pdTalkLabel.setText(str(pd['TalkLabel']))
-        self.ui.pdContactLabel.setText(str(pd['ContactLabel']))
-        self.ui.pdWork.setText(str(pd['Work']))
-        self.ui.pdDowsing.setText(str(pd['Dowsing']))
-        self.ui.pdLoadFirst.setChecked(pd['LoadFirst'] != 0)
-        self.ui.pdDoNotLoad.setText(str(pd['DoNotLoad']))
-        self.ui.pdTalkToRange.setText(str(pd['TalkToRange']))
-        self.ui.pdTalkToSizeX.setText(str(pd['TalkToSize']['x']))
-        self.ui.pdTalkToSizeY.setText(str(pd['TalkToSize']['y']))
-        self.ui.pdTalkBit.setText(str(pd['TalkBit']))
+        self.ui.pdID.setText(pd['data']['ID'])
+        self.ui.pdTrainerID.setText(str(pd['data']['TrainerID']))
+        self.ui.pdOGI.setText(str(pd['data']['ObjectGraphicIndex']))
+        self.ui.pdPositionX.setValue(int(pd['data']['Position']['x']))
+        self.ui.pdPositionY.setValue(int(pd['data']['Position']['y']))
+        self.ui.pdHeightLayer.setText(str(pd['data']['HeightLayer']))
+        self.ui.pdRotation.setCurrentText(ROTATION[pd['data']['Rotation']])
+        self.ui.pdMoveLimitX.setValue(int(pd['data']['MoveLimit']['x']))
+        self.ui.pdMoveLimitY.setValue(int(pd['data']['MoveLimit']['y']))
+        self.ui.pdMoveCode.setText (str(pd['data']['MoveCode']))
+        self.ui.pdMoveParam0.setText(str(pd['data']['MoveParam0']))
+        self.ui.pdMoveParam1.setText(str(pd['data']['MoveParam1']))
+        self.ui.pdMoveParam2.setText(str(pd['data']['MoveParam2']))
+        self.ui.pdTalkLabel.setText(str(pd['data']['TalkLabel']))
+        self.ui.pdContactLabel.setText(str(pd['data']['ContactLabel']))
+        self.ui.pdWork.setText(str(pd['data']['Work']))
+        self.ui.pdDowsing.setText(str(pd['data']['Dowsing']))
+        self.ui.pdLoadFirst.setChecked(pd['data']['LoadFirst'] != 0)
+        self.ui.pdDoNotLoad.setText(str(pd['data']['DoNotLoad']))
+        self.ui.pdTalkToRange.setText(str(pd['data']['TalkToRange']))
+        self.ui.pdTalkToSizeX.setText(str(pd['data']['TalkToSize']['x']))
+        self.ui.pdTalkToSizeY.setText(str(pd['data']['TalkToSize']['y']))
+        self.ui.pdTalkBit.setText(str(pd['data']['TalkBit']))
 
         #Set the true BDSP map position for later use.
         self.SELECTED_PLACEDATA_POS = { 
-            'x': int(pd['Position']['x']),
-            'y': int(pd['Position']['y'])
+            'x': int(pd['data']['Position']['x']),
+            'y': int(pd['data']['Position']['y'])
         }
 
     def printTest(self, msg):
         QMessageBox.information(self, '', msg)
 
+
+    def saveEvent(self):
+        #Get the SelectedPlaceData and overwrite the corresponding entry in the loaded placedata.
+
+
+        return
 
     def saveMatrix(self):
         if os.path.exists("output") is False:

@@ -97,7 +97,8 @@ COLLISIONS = {
     219128: 'BIKERACK'
 }
 
-PLACEDATA_NEW = {
+
+PLACEDATA_BLANK = {
     "ID": "",
     "zoneID": 0,
     "TrainerID": 0,
@@ -135,6 +136,12 @@ PLACEDATA_NEW = {
         "y": 0
     },
     "TalkBit": 15
+}
+
+PLACEDATA_NEW = {
+    "filename": "",
+    "index": -1,
+    "data": PLACEDATA_BLANK
 }
 
 ROTATION_UP = 180
