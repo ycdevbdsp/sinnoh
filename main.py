@@ -177,6 +177,10 @@ class Overworld(QMainWindow):
                 unpackMasterData = True
                 unpackGameSettings = True
                 unpackEvScript = True
+        else:
+            unpackMasterData = True
+            unpackGameSettings = True
+            unpackEvScript = True
                 
         #Look for masterdatas and gamesettings
 
@@ -184,7 +188,7 @@ class Overworld(QMainWindow):
             masterdatas = UnityPy.load(f"{romfs}/{mdPath}")
             
             if path.exists(f"{romfs}_unpacked/{mdPath}") is False:
-                        os.makedirs(f"{romfs}_unpacked/{mdPath}")
+                os.makedirs(f"{romfs}_unpacked/{mdPath}")
 
             for i in tqdm(range(len(masterdatas.objects))):
                 obj = masterdatas.objects[i]
@@ -202,7 +206,7 @@ class Overworld(QMainWindow):
 
                         for pd in tree['Data']:
                             if self.PlaceDatas.get(pd['zoneID']) is None:
-                                self.PlaceDatas[pd['zoneID']] = { "filename": filename }
+                                self.PlaceDatas[pd['zoneID']] = {"filename": tree['m_Name']}
 
                             self.PlaceDatas[pd['zoneID']][pd['ID']] = {
                                 "index": pdIndex,
