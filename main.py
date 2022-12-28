@@ -1,3 +1,4 @@
+import copy
 import sys
 import UnityPy
 import os
@@ -276,16 +277,19 @@ class Overworld(QMainWindow):
         if self.SelectedCell is None:
             return
             
+        if zoneID is False:
+            zoneID = self.Sinnoh['ZoneIDs'][self.SelectedCell]
+
         colFileName = f"map{self.CellMatrix['col']}_{self.CellMatrix['row']}"
         exFileName = f"{colFileName}_Ex"
 
         if colFileName not in self.CollisionTrees:
-            newCol = collisionHeader.colHeader
+            newCol = copy.deepcopy(collisionHeader.colHeader)
             newCol['m_Name'] = colFileName
             self.CollisionTrees[colFileName] = newCol
 
         if exFileName not in self.CollisionTrees:
-            newEx = collisionHeader.exHeader
+            newEx = copy.deepcopy(collisionHeader.exHeader)
             newEx['m_Name'] = exFileName
             self.CollisionTrees[exFileName] = newEx
 

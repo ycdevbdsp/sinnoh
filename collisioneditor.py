@@ -78,10 +78,18 @@ class CollisionEditor(QWidget):
         self.GridWidth = self.CollisionData['Width']
         self.GridHeight = int(len(self.CollisionData['Attributes']) / self.GridWidth)
 
-        #Mark the location of the associated ev_script file
-        self.SCRIPT_PATH = open(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/{str(zones.zones[self.ZoneID]['WarpName'].lower())}.ev")
-        self.TRAINER_SCRIPT_PATH = open(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/trainer.ev")
+        fileName = f"map{mapOffsets['col']}_{mapOffsets['row']}"
 
+        #Mark the location of the associated ev_script file
+
+        if self.ZoneID in zones.zones and os.path.exists(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/{str(zones.zones[self.ZoneID]['WarpName'].lower())}.ev") is True:
+            self.SCRIPT_PATH = open(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/{str(zones.zones[self.ZoneID]['WarpName'].lower())}.ev")
+        # else:
+        #     self.SCRIPT_PATH = open(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/{fileName}.ev")
+
+        if os.path.exists(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/trainer.ev"):
+            self.TRAINER_SCRIPT_PATH = open(f"{self.UNPK_ROMFS_PATH}/{self.DPR_PATH}/ev_script/trainer.ev")
+        
         if self.SCRIPT_PATH is not None:
             lines = self.SCRIPT_PATH.readlines()
             scriptHeader = ""
