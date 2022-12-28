@@ -370,8 +370,11 @@ class Overworld(QMainWindow):
         if self.setSelectedCell(event) is False:
             return
 
+        if self.SelectedCell is None:
+            return
+
         # print(f"Searching {self.SelectedCell}")
-        if self.IsArrayed is True and self.SelectedCell in self.Sinnoh['ZoneIDs']['Array']:
+        if self.IsArrayed is True and self.SelectedCell < len(self.Sinnoh['ZoneIDs']['Array']):
             self.ui.uiZoneID.setText(str(self.Sinnoh['ZoneIDs']['Array'][self.SelectedCell]))
             self.ui.uiAttributeFID.setText(str(self.SinnohAttribute['AttributeBlocks']['Array'][self.SelectedCell]['m_FileID']))
             self.ui.uiAttributePID.setText(str(self.SinnohAttribute['AttributeBlocks']['Array'][self.SelectedCell]['m_PathID']))
@@ -381,7 +384,7 @@ class Overworld(QMainWindow):
             self.ui.uiAttributeSPPID.setText(str(self.SinnohAttribute_sp['AttributeBlocks']['Array'][self.SelectedCell]['m_PathID']))
             self.ui.uiAttributeEXSPFID.setText(str(self.SinnohAttribute_Ex_sp['AttributeBlocks']['Array'][self.SelectedCell]['m_FileID']))
             self.ui.uiAttributeEXSPPID.setText(str(self.SinnohAttribute_Ex_sp['AttributeBlocks']['Array'][self.SelectedCell]['m_PathID']))
-        elif self.SelectedCell in self.Sinnoh['ZoneIDs']:
+        elif self.SelectedCell < len(self.Sinnoh['ZoneIDs']):
             self.ui.uiZoneID.setText(str(self.Sinnoh['ZoneIDs'][self.SelectedCell]))
             self.ui.uiAttributeFID.setText(str(self.SinnohAttribute['AttributeBlocks'][self.SelectedCell]['m_FileID']))
             self.ui.uiAttributePID.setText(str(self.SinnohAttribute['AttributeBlocks'][self.SelectedCell]['m_PathID']))
