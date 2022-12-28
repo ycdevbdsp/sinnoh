@@ -6,7 +6,7 @@
 
 The author of this application makes the assumption that you have a general idea of what you're trying to do, and will not provide instructions on how to acquire the data that this application can modify.
 
-However, assuming you do have that, select File > Load and select the file that contains the map matrix files (hint: it's called "gamesettings"). The app will begin iterating over some data and may take a while depending on your computer. Recommend opening the tool from a command shell so you can see the loading progress.
+However, assuming you do have that, select File > Load and select your "romfs" folder. The app will begin iterating over some data and may take a while depending on your computer. Recommend opening the tool from a command shell so you can see the loading progress. Once this loading is done for the first time, you will have a "romfs_unpacked" folder in the same directory of your "romfs" folder. On future runs of the application, when the romfs folder is selected, you will be asked if you want to use the already unpacked files. If you select no, they will be unpacked from scratch again.
 
 
 ## Editing Cells
