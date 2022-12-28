@@ -29,7 +29,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tabEvents">
     <attribute name="title">
@@ -577,6 +577,9 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="colHeightLabel">
      <property name="geometry">
@@ -939,6 +942,9 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="label">
      <property name="geometry">
@@ -952,6 +958,218 @@
      <property name="text">
       <string>Ex Attr</string>
      </property>
+    </widget>
+    <widget class="QLabel" name="colExTileLabel">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>50</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Collision Tile</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBoxCollisionExTile">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>50</y>
+       <width>221</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>111</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="currentText">
+      <string>EMPTY</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>EMPTY</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LIGHT_GREEN_GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FLOWERS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SAND</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DIRT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GREY_PATH</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SNOW</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SNOW_GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SINKING_SNOW</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SINKING_SNOW_2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>IRON_ISLAND_DIRT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>OREBURGH_DIRT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TALL_GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>JUBILIFE_NOT_ROADS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>JUFILIFE_ROADS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ETERNA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>STAIRS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BUILDING_INSIDE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BUILDING_INSIDE_2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRIDGE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRIDGE_WITH_SNOW</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRIDGE_WITH_NOTHING</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BRIDGE_WITH_GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SUNYSHOR_BRIDGE_WITH_NOTHING</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SUNYSHORE_BRIDGE_WITH_PATH</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SUNYSHORE_BRIDGE_WITH_WATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BIKERIDE_BRIDGE_WITH_NOTHING</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>BIKERIDE_BRIDGE_WITH_GRASS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CYCLING_ROAD</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CYCLING_ROAD_2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>HIDDEN_CAVE_UNDER_CYCLING_ROAD</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PUDDLE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WALKABLE_WATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>POND_WATER</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>OCEAN_WATER</string>
+      </property>
+     </item>
     </widget>
    </widget>
   </widget>

@@ -58,6 +58,7 @@ class CollisionEditor(QWidget):
         self.ui.btnColSaveMatrix.clicked.connect(self.saveMatrix)
         self.ui.btnSaveEvent.clicked.connect(self.saveEvent)
         self.ui.comboBoxCollisionTile.currentTextChanged.connect(self.collisionTileChanged)
+        self.ui.comboBoxCollisionExTile.currentTextChanged.connect(self.collisionExTileChanged)
         self.CollisionData = collisionData
         self.ExData = exData
         self.PlaceData = placeData
@@ -123,6 +124,17 @@ class CollisionEditor(QWidget):
         elif self.SelectedCell['map'] == self.ui.uiColExMap:
             self.ExData['Attributes'][cell] = COLLISIONS[tile]
 
+    def collisionExTileChanged(self):
+        if self.SelectedCell == None or (not self.UpdateTile):
+            return
+
+        cell = self.SelectedCell['cell']
+        tile = self.ui.comboBoxCollisionExTile.currentText()
+
+        if self.SelectedCell['map'] == self.ui.uiColExMap:
+            self.ExData['Attributes'][cell] = EX_ATTRIBUTES[tile]
+            self.ui.uiColExValue.setText(str(EX_ATTRIBUTES[tile]))
+            
     def heightChanged(self):
         if self.Loading is True:
             return
@@ -177,7 +189,6 @@ class CollisionEditor(QWidget):
 
         #Before we begin drawing the grid, if width x height exceeds the count of ZoneIDs
         #then we need to add new entries to the arrays of each file.
-        #print(f"len(zJson)({len(zJson)}\ncellWidth({cellWidth})")
 
         if self.GridHeight * self.GridWidth > len(zJson):
             for n in range(self.GridHeight*self.GridWidth - len(zJson)):
@@ -196,21 +207,29 @@ class CollisionEditor(QWidget):
                 z = zJson[tCell]
                 rect = QRectF(c*cellWidth, r*cellHeight, cellWidth, cellHeight)
                 
-                if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
-                    qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
-                else:
-                    if z == 128:
-                        qp.setBrush(QBrush(BLACK, Qt.SolidPattern))
-                    elif z == 0:
-                        qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
-                    elif z == 105128:
-                        qp.setBrush(QBrush(ORANGE, Qt.SolidPattern))
-                    elif z == 16000:
-                        qp.setBrush(QBrush(GREEN, Qt.SolidPattern))
-                    elif z == -1:
+                if map == self.ui.uiColMap:
+                    if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
+                        qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
+                    elif z == 128:
                         qp.setBrush(QBrush(RED, Qt.SolidPattern))
                     else:
-                        qp.setBrush(QBrush(YELLOW, Qt.SolidPattern))
+                        qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
+                else:   
+                    if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
+                        qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
+                    else:
+                        if z == 128:
+                            qp.setBrush(QBrush(BLACK, Qt.SolidPattern))
+                        elif z == 0:
+                            qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
+                        elif z == 105128:
+                            qp.setBrush(QBrush(ORANGE, Qt.SolidPattern))
+                        elif z == 16000:
+                            qp.setBrush(QBrush(GREEN, Qt.SolidPattern))
+                        elif z == -1:
+                            qp.setBrush(QBrush(RED, Qt.SolidPattern))
+                        else:
+                            qp.setBrush(QBrush(YELLOW, Qt.SolidPattern))
 
                 qp.drawRect(rect)
             
@@ -381,9 +400,10 @@ class CollisionEditor(QWidget):
 
             self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell['cell']]))
             self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell['cell']]))
-
-            if not (COLLISIONS.get(self.CollisionData['Attributes'][self.SelectedCell['cell']])) is None:
+            if map == self.ui.uiColMap and not (COLLISIONS.get(self.CollisionData['Attributes'][self.SelectedCell['cell']])) is None:
                 self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[self.CollisionData['Attributes'][self.SelectedCell['cell']]])
+            elif map == self.ui.uiColExMap and not (EX_ATTRIBUTES_BY_VALUE.get(self.ExData['Attributes'][self.SelectedCell['cell']])) is None:
+                self.ui.comboBoxCollisionExTile.setCurrentText(EX_ATTRIBUTES_BY_VALUE.get(self.ExData['Attributes'][self.SelectedCell['cell']]))
             else:
                 self.UpdateTile = False
                 self.ui.comboBoxCollisionTile.setCurrentText("UNKNOWN")

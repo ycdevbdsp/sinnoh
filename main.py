@@ -150,7 +150,12 @@ class Overworld(QMainWindow):
                 if path.exists(f"{romfs}_unpacked/{gsPath}"):
                     for filename in os.listdir(f"{romfs}_unpacked/{gsPath}"):
                         thePath = os.path.join(f"{romfs}_unpacked/{gsPath}/{filename}")
-                        if filename.lower() == "sinnoh":
+
+                        if re.search(r'map[0-9]*_[0-9]*.*', filename):
+                            #tree['Attributes'] has what we need, but save the whole tree file
+                            input = open(thePath)
+                            self.CollisionTrees[filename] = json.load(input)
+                        elif filename.lower() == "sinnoh":
                             input = open(thePath)
                             self.Sinnoh = json.load(input)
                         elif filename.lower() == "sinnohattribute":
@@ -268,6 +273,9 @@ class Overworld(QMainWindow):
         self.drawOverworld()
 
     def openCollisionEditor(self, zoneID):
+        if self.SelectedCell is None:
+            return
+            
         colFileName = f"map{self.CellMatrix['col']}_{self.CellMatrix['row']}"
         exFileName = f"{colFileName}_Ex"
 
@@ -355,10 +363,11 @@ class Overworld(QMainWindow):
             json.dump(self.SinnohAttribute_Ex_sp, of)
 
     def cellClicked(self, event, map):
-        self.setSelectedCell(event)
+        if self.setSelectedCell(event) is False:
+            return
 
         # print(f"Searching {self.SelectedCell}")
-        if self.IsArrayed is True:
+        if self.IsArrayed is True and self.SelectedCell in self.Sinnoh['ZoneIDs']['Array']:
             self.ui.uiZoneID.setText(str(self.Sinnoh['ZoneIDs']['Array'][self.SelectedCell]))
             self.ui.uiAttributeFID.setText(str(self.SinnohAttribute['AttributeBlocks']['Array'][self.SelectedCell]['m_FileID']))
             self.ui.uiAttributePID.setText(str(self.SinnohAttribute['AttributeBlocks']['Array'][self.SelectedCell]['m_PathID']))
@@ -368,7 +377,7 @@ class Overworld(QMainWindow):
             self.ui.uiAttributeSPPID.setText(str(self.SinnohAttribute_sp['AttributeBlocks']['Array'][self.SelectedCell]['m_PathID']))
             self.ui.uiAttributeEXSPFID.setText(str(self.SinnohAttribute_Ex_sp['AttributeBlocks']['Array'][self.SelectedCell]['m_FileID']))
             self.ui.uiAttributeEXSPPID.setText(str(self.SinnohAttribute_Ex_sp['AttributeBlocks']['Array'][self.SelectedCell]['m_PathID']))
-        else:
+        elif self.SelectedCell in self.Sinnoh['ZoneIDs']:
             self.ui.uiZoneID.setText(str(self.Sinnoh['ZoneIDs'][self.SelectedCell]))
             self.ui.uiAttributeFID.setText(str(self.SinnohAttribute['AttributeBlocks'][self.SelectedCell]['m_FileID']))
             self.ui.uiAttributePID.setText(str(self.SinnohAttribute['AttributeBlocks'][self.SelectedCell]['m_PathID']))
@@ -382,14 +391,16 @@ class Overworld(QMainWindow):
         self.drawOverworld()
 
     def cellDoubleClicked(self, event, map):
-        self.setSelectedCell(event)
+        if self.setSelectedCell(event) is False:
+            return
+
         self.openCollisionEditor(self.Sinnoh['ZoneIDs'][self.SelectedCell])
     
     def setSelectedCell(self, event):
         self.SelectedCell = None
 
         if self.CellHeight == 0:
-            return
+            return False
 
         row = int((event.y() / self.CellHeight))
         col = int((event.x() / self.CellWidth))
@@ -398,10 +409,12 @@ class Overworld(QMainWindow):
         self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
 
         self.SelectedCell = cell
-
+        self.ui.uiMapMatrixSelection.setText(f"map{self.CellMatrix['col']}_{self.CellMatrix['row']}")
         if self.SelectedCell > (self.GridHeight * self.GridWidth):
             self.SelectedCell = None
-            self.drawOverworld()        
+            self.drawOverworld()
+
+        return True
 
 
     def widthChanged(self):

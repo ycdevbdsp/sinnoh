@@ -105,8 +105,8 @@
    <widget class="QSpinBox" name="uiWidthSB">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>450</y>
+      <x>50</x>
+      <y>460</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -115,8 +115,8 @@
    <widget class="QSpinBox" name="uiHeightSB">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>480</y>
+      <x>50</x>
+      <y>490</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -125,8 +125,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>442</y>
+      <x>10</x>
+      <y>452</y>
       <width>47</width>
       <height>31</height>
      </rect>
@@ -138,8 +138,8 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>470</y>
+      <x>10</x>
+      <y>480</y>
       <width>47</width>
       <height>31</height>
      </rect>
@@ -374,8 +374,8 @@
    <widget class="QPushButton" name="btnSaveCell">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>540</y>
+      <x>10</x>
+      <y>550</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -387,8 +387,8 @@
    <widget class="QPushButton" name="btnSaveMatrix">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>570</y>
+      <x>10</x>
+      <y>580</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -400,14 +400,40 @@
    <widget class="QPushButton" name="btnEditCollision">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>510</y>
+      <x>10</x>
+      <y>520</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>Edit Collision</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>430</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Selected:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="uiMapMatrixSelection">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>430</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
