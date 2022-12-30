@@ -142,8 +142,10 @@ class Overworld(QMainWindow):
                                 
                                 self.PlaceDatas[pd['zoneID']][pd['ID']] = {
                                     "index": pdIndex,
-                                    "data": pd
+                                    "data": pd,
+                                    "completeFile": f
                                 }
+
                                 pdIndex += 1
                 else:
                     unpackMasterData = True

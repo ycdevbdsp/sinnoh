@@ -226,18 +226,18 @@ class CollisionEditor(QWidget):
                     if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
                         qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
                     else:
-                        if z == 128:
-                            qp.setBrush(QBrush(BLACK, Qt.SolidPattern))
-                        elif z == 0:
-                            qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
-                        elif z == 105128:
-                            qp.setBrush(QBrush(ORANGE, Qt.SolidPattern))
-                        elif z == 16000:
-                            qp.setBrush(QBrush(GREEN, Qt.SolidPattern))
-                        elif z == -1:
-                            qp.setBrush(QBrush(RED, Qt.SolidPattern))
+                        # Attribute values are in the same index as their collision counterpart,
+                        # so we can use the tCell index to match the two and use the collision's
+                        # corresponding color to set the color of the attribute in an attempt to
+                        # match what PDSMS does with its "Type" map view.
+
+                        if self.CollisionData['Attributes'][tCell] not in COL_ATTR_COLORS:
+                            colorValue = '#FFFFFF'
                         else:
-                            qp.setBrush(QBrush(YELLOW, Qt.SolidPattern))
+                            colorValue = COL_ATTR_COLORS[self.CollisionData['Attributes'][tCell]]
+                        color = QColor(colorValue)
+                        color.setAlpha(int(255*0.50))
+                        qp.setBrush(QBrush(color, Qt.SolidPattern))
 
                 qp.drawRect(rect)
             
@@ -499,8 +499,37 @@ class CollisionEditor(QWidget):
 
 
     def saveEvent(self):
+        thisPD = self.PlaceDataCells[self.SelectedPlaceData]
+        pdIndex = thisPD['index']
+        pdFile = thisPD['completeFile']
+        pd = pdFile['Data'][pdIndex]
+        
         #Get the SelectedPlaceData and overwrite the corresponding entry in the loaded placedata.
-
+        pd['ID'] = self.ui.pdID.text()
+        pd['TrainerID'] = int(self.ui.pdTrainerID.text())
+        pd['ObjectGraphicIndex'] = int(self.ui.pdOGI.text())
+        pd['Position']['x'] = float(self.ui.pdPositionX.text())
+        pd['Position']['y'] = float(self.ui.pdPositionY.text())
+        pd['HeightLayer'] = int(self.ui.pdHeightLayer.text())
+        pd['Rotation'] = ROTATION_BY_TEXT[self.ui.pdRotation.currentText()]
+        pd['MoveLimit']['x'] = float(self.ui.pdMoveLimitX.text())
+        pd['MoveLimit']['y'] = float(self.ui.pdMoveLimitY.text())
+        pd['MoveCode'] = int(self.ui.pdMoveCode.text())
+        pd['MoveParam0'] = int(self.ui.pdMoveParam0.text())
+        pd['MoveParam1'] = int(self.ui.pdMoveParam1.text())
+        pd['MoveParam2'] = int(self.ui.pdMoveParam2.text())
+        pd['TalkLabel'] = self.ui.pdTalkLabel.text()
+        pd['ContactLabel'] = self.ui.pdContactLabel.text()
+        pd['Work'] = int(self.ui.pdWork.text())
+        pd['Dowsing'] = int(self.ui.pdDowsing.text())
+        pd['LoadFirst'] = int(self.ui.pdLoadFirst.isChecked())
+        pd['DoNotLoad'] = int(self.ui.pdDoNotLoad.text())
+        pd['TalkToRange'] = float(self.ui.pdTalkToRange.text())
+        pd['TalkToSize']['x'] = float(self.ui.pdTalkToSizeX.text())
+        pd['TalkToSize']['y'] = float(self.ui.pdTalkToSizeY.text())
+        pd['TalkBit'] = int(self.ui.pdTalkBit.text())
+        
+        thisPD['data'] = pd
 
         return
 

@@ -6,7 +6,7 @@ MAP_WIDTH = 32
 MAP_HEIGHT = 32
 
 #COLORS
-alpha = int(255*0.25)
+alpha = int(255*0.55)
 GRIDLINE = QColor(0, 0, 0)
 BLACK = QColor(0, 0, 0, alpha)
 BLUE = QColor(0, 255, 247, alpha)
@@ -18,6 +18,49 @@ REDCOLLISION = QColor(255, 0, 0, 255)
 WHITECOLLISION = QColor(255, 255, 255, 255)
 YELLOW = QColor(255, 252, 5, alpha)
 SELECTED = QColor(255, 255, 0, 255)
+
+COL_ATTR_COLORS = {
+    0: '#FFFFFF',
+    128: '#FF0000',
+    2000: '#009900',
+    169000: '#009900',
+    3000: '#006600',
+    12000: '#937667',
+    12128: '#937667',
+    16000: '#0099FF',
+    21000: '#0066FF',
+    22000: '#8A4B08',
+    23000: '#A2B8CE',
+    33000: '#FFFF99',
+    56128: '#8A4B08',
+    57128: '#8A4B08',
+    59128: '#8A4B08',
+    75128: '#7D5858',
+    76128: '#7D5858',
+    105128: '#9900FF',
+    108000: '#9900FF',
+    109000: '#9900FF',
+    110128: '#9900FF',
+    111000: '#9900FF',
+    112000: '#FF9900',
+    113000: '#FF9900',
+    115000: '#FF9900',
+    118000: '#FF9900',
+    121000: '#FF9900',
+    122000: '#FF9900',
+    124000: '#FF9900',
+    125000: '#FF9900',
+    160128: '#553800',
+    161000: '#9E9E9E',
+    162000: '#707070',
+    163000: '#494949',
+    164000: '#67604A',
+    165000: '#67604A',
+    168000: '#D8D8D8',
+    217000: '#BCC48B',
+    218000: '#BCC48B',
+    219128: '#1060A8'
+}
 
 EX_ATTRIBUTES = {
     "EMPTY": 100000000,
@@ -61,6 +104,7 @@ EX_ATTRIBUTES = {
 EX_ATTRIBUTES_BY_VALUE = {v: k for k, v in EX_ATTRIBUTES.items()}
 
 #COLLISION VALUES
+
 COLLISIONS = {
     'UNKNOWN': -1,
     'WALKABLE': 0,
@@ -197,3 +241,5 @@ ROTATION = {
     180: "UP",
     270: "RIGHT"
 }
+
+ROTATION_BY_TEXT = {v: k for k, v in ROTATION.items()}
