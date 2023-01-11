@@ -22,6 +22,8 @@ This tool supports viewing Collision and Ex attributes for selected cells. It wi
 
 This tab shows placedata entries for the loaded map area. Its attributes can be modified using the fields on the right. Selecting one will populate the fields with its current data, and clicking an empty cell will allow you to create a new placedata entry for the loaded map. Make your changes and click "Save Event" to save changes to the event. Click the "Save Map" button in the bottom left to save all your changes to file.
 
+The two script tabs at the bottom are currently read-only.
+
 ![image](https://user-images.githubusercontent.com/56665250/211706226-2023aa90-1b8c-4c60-a4e9-e6dac6cb6feb.png)
 
 ## Collision Tab
