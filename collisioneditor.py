@@ -1,20 +1,26 @@
 import json
 import os
+import copy
+import constants
 from os import path
 from tqdm import tqdm
 from map import *
 from math import floor
 from tkinter import filedialog
 from tkinter import *
-from PyQt5.QtWidgets import QWidget, QMessageBox, QShortcut
-from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QKeySequence
+from PyQt5.QtWidgets import QWidget, QMessageBox, QShortcut, QOpenGLWidget
+from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QKeySequence, QPixmap
 from PyQt5.QtCore import Qt, QRectF
 import clicklabel
 import collision
+from mousetracker import *
 import zones
 from constants import *
+from modelviewer import modelviewer
+import OpenGL.GL as gl
 
 
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-300,-300)
 
 class CollisionEditor(QWidget):
     
@@ -22,6 +28,7 @@ class CollisionEditor(QWidget):
     CellHeight = 0
     CollisionData = None
     EventsMapSelected = None
+    SelectedPaletteIndex = -1
     ExData = None
     GridHeight = 0
     GridWidth = 0
@@ -33,6 +40,13 @@ class CollisionEditor(QWidget):
     UpdateTile = True
     ZoneID = 0
 
+    #TILE DRAWING
+    CollisionMapSelectionMode = MapSelectionMode.VIEW
+    ExMapSelectionMode = MapSelectionMode.VIEW
+    Drawing = False
+    LastMouseX = -99
+    LastMouseY = -99
+
     #FILEPATHS
     ROMFS_PATH = ""
     UNPK_ROMFS_PATH = ""
@@ -40,6 +54,8 @@ class CollisionEditor(QWidget):
     SCRIPT_PATH = None
     TRAINER_SCRIPT_PATH = None
     EV_SCRIPT = {}
+
+    MV = None
 
     #PLACEDATA MOVEMENT
     PD_MOVE_KEYS = [QtCore.Qt.Key.Key_Left, QtCore.Qt.Key.Key_Right, QtCore.Qt.Key.Key_Up, QtCore.Qt.Key.Key_Down]
@@ -51,7 +67,11 @@ class CollisionEditor(QWidget):
         self.ui.setupUi(self)
         self.ui.uiColMap.clicked.connect(self.mousePressed)
         self.ui.uiColExMap.clicked.connect(self.mousePressed)
+        self.ui.uiColMap.released.connect(self.mouseReleased)
+        self.ui.uiColExMap.released.connect(self.mouseReleased)
         self.ui.uiEventsMap.clicked.connect(self.eventsMousePressed)
+        self.ui.uiCollisionPalette.clicked.connect(self.collisionPaletteClicked)
+        self.ui.uiAttributePalette.clicked.connect(self.attributePaletteClicked)
         self.ui.uiEventsMap.keypressed.connect(self.keyPressed)
         self.ui.uiColHeightSB.valueChanged.connect(self.heightChanged)
         self.ui.uiColWidthSB.valueChanged.connect(self.widthChanged)
@@ -59,6 +79,7 @@ class CollisionEditor(QWidget):
         self.ui.btnSaveEvent.clicked.connect(self.saveEvent)
         self.ui.comboBoxCollisionTile.currentTextChanged.connect(self.collisionTileChanged)
         self.ui.comboBoxCollisionExTile.currentTextChanged.connect(self.collisionExTileChanged)
+        
         self.CollisionData = collisionData
         self.ExData = exData
         self.PlaceData = placeData
@@ -67,6 +88,16 @@ class CollisionEditor(QWidget):
         self.ROMFS_PATH = filepaths['romfs']
         self.UNPK_ROMFS_PATH = filepaths['romfs_unpacked']
         self.DPR_PATH = filepaths['dpr']
+        self.PLACEDATA_FILE = filepaths['pdFile']
+        self.CollisionPalette = {}
+        self.AttributePalette = {}
+
+
+        
+        collisionMouseTracker = MouseTracker(self.ui.uiColMap)
+        collisionMouseTracker.positionChanged.connect(self.colMapMouseMoveEvent)
+        exMouseTracker = MouseTracker(self.ui.uiColExMap)
+        exMouseTracker.positionChanged.connect(self.exMapMouseMoveEvent)
 
         QShortcut(QKeySequence(Qt.Key.Key_Left), self, activated=self.movePDLeft)
         QShortcut(QKeySequence(Qt.Key.Key_Up), self, activated=self.movePDUp)
@@ -74,6 +105,10 @@ class CollisionEditor(QWidget):
         QShortcut(QKeySequence(Qt.Key.Key_Down), self, activated=self.movePDDown)
         #Since the map and map_*_ex files are intended to go together, we will assume they
         #should have the same dimensions.
+
+
+        # self.MV = modelviewer.MinimalGLWidget(parent=self.ui.uiOpenGLFrame)
+        # self.MV.setMinimumSize(300,300)
 
         self.GridWidth = self.CollisionData['Width']
         self.GridHeight = int(len(self.CollisionData['Attributes']) / self.GridWidth)
@@ -119,6 +154,8 @@ class CollisionEditor(QWidget):
         self.drawCollisions()
         self.Loading = False
 
+        
+
     def collisionTileChanged(self):
         if self.SelectedCell == None or (not self.UpdateTile):
             return
@@ -143,6 +180,61 @@ class CollisionEditor(QWidget):
             self.ExData['Attributes'][cell] = EX_ATTRIBUTES[tile]
             self.ui.uiColExValue.setText(str(EX_ATTRIBUTES[tile]))
             
+
+    def attributePaletteClicked(self, event, palette):
+        cellSize = palette.width() / 5
+        cell = int(event.x()/cellSize) + int(event.y()/cellSize)
+
+        row = int((event.y() / cellSize))
+        col = int((event.x() / cellSize))
+        cell = row * 5 + col
+
+        if cell >= len(self.AttributePalette):
+            return
+            
+        if cell == self.SelectedPaletteIndex:
+            self.SelectedPaletteIndex = -1
+            self.ui.uiExDrawingModeLabel.setText("")
+            self.ExMapSelectionMode = MapSelectionMode.VIEW
+        else:
+            self.SelectedPaletteIndex = cell
+            self.ui.uiExDrawingModeLabel.setText("DRAWING MODE")
+            self.ExMapSelectionMode = MapSelectionMode.DRAW
+
+        exAttr = self.AttributePalette[cell]
+        self.ui.comboBoxCollisionExTile.setCurrentText(EX_ATTRIBUTES_BY_VALUE[exAttr])
+        self.drawCollisionOrAttributePalette(palette)
+        print(f"Selected cell {cell}")
+
+
+    def collisionPaletteClicked(self, event, palette):
+        cellSize = palette.width() / 5
+        cell = int(event.x()/cellSize) + int(event.y()/cellSize)
+
+        row = int((event.y() / cellSize))
+        col = int((event.x() / cellSize))
+        cell = row * 5 + col
+
+        if cell >= len(self.CollisionPalette):
+            return
+
+        if cell == self.SelectedPaletteIndex:
+            self.SelectedPaletteIndex = -1
+            self.ui.uiCollisionDrawingModeLabel.setText("")
+            self.CollisionMapSelectionMode = MapSelectionMode.VIEW
+        else:
+            self.SelectedPaletteIndex = cell
+            self.ui.uiCollisionDrawingModeLabel.setText("DRAWING MODE")
+            self.CollisionMapSelectionMode = MapSelectionMode.DRAW
+
+        colAttr = self.CollisionPalette[cell]
+        self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[colAttr])
+        self.drawCollisionOrAttributePalette(palette)
+
+        print(f"Selected cell {cell}")
+        # self.ui.comboBoxCollisionTile.setCurrentText(self.CollisionPalette)
+
+
     def heightChanged(self):
         if self.Loading is True:
             return
@@ -160,7 +252,10 @@ class CollisionEditor(QWidget):
     def drawCollisions(self):
         self.drawCollision(self.ui.uiColMap)
         self.drawCollision(self.ui.uiColExMap)
+        self.drawCollisionOrAttributePalette(self.ui.uiCollisionPalette)
+        self.drawCollisionOrAttributePalette(self.ui.uiAttributePalette)
         self.drawOverworldEventMap(self.ui.uiEventsMap)
+
 
     def drawCollision(self, map):
         if os.path.exists(f"maps/{self.CollisionData['m_Name']}c.png"):
@@ -216,14 +311,14 @@ class CollisionEditor(QWidget):
                 rect = QRectF(c*cellWidth, r*cellHeight, cellWidth, cellHeight)
                 
                 if map == self.ui.uiColMap:
-                    if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
+                    if self.CollisionMapSelectionMode == MapSelectionMode.VIEW and self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
                         qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
                     elif z == 128:
-                        qp.setBrush(QBrush(RED, Qt.SolidPattern))
+                        qp.setBrush(QBrush(REDCOLLISION, Qt.SolidPattern))
                     else:
-                        qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
+                        qp.setBrush(QBrush(WHITECOLLISION, Qt.SolidPattern))
                 else:   
-                    if self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
+                    if self.ExMapSelectionMode == MapSelectionMode.VIEW and self.SelectedCell is not None and tCell == self.SelectedCell['cell']:
                         qp.setBrush(QBrush(SELECTED, Qt.SolidPattern))
                     else:
                         # Attribute values are in the same index as their collision counterpart,
@@ -234,7 +329,7 @@ class CollisionEditor(QWidget):
                         if self.CollisionData['Attributes'][tCell] not in COL_ATTR_COLORS:
                             colorValue = '#FFFFFF'
                         else:
-                            colorValue = COL_ATTR_COLORS[self.CollisionData['Attributes'][tCell]]
+                            colorValue = EX_ATTR_COLORS[self.ExData['Attributes'][tCell]]
                         color = QColor(colorValue)
                         color.setAlpha(int(255*0.50))
                         qp.setBrush(QBrush(color, Qt.SolidPattern))
@@ -244,9 +339,94 @@ class CollisionEditor(QWidget):
         self.CellWidth = cellWidth
         self.CellHeight = cellHeight
 
-
         map.repaint()
+        qp.end()
+
+    def drawCollisionOrAttributePalette(self, palette):
+        
+        def decimal_to_hex(decimal):
+            hex_string = hex(decimal)[2:] # get the hex string of the decimal integer, and remove the "0x" prefix
+            if len(hex_string) < 2: # if the hex string has only one digit
+                hex_string = "0" + hex_string # add a leading 0
+            return hex_string
+
+        #Prepare the collision and attribute palettes.
+
+        paletteIndex = 0
+        paletteWidth = palette.width()
+        paletteHeight = palette.height()
+        cellSize = paletteWidth / 5
+
+        canvas = QtGui.QPixmap(paletteWidth, paletteHeight)
+        palette.setPixmap(canvas)
+        palette.pixmap().fill(QtGui.QColor('White'))
+
+        #the collision and attribute pallets are the exact same dimensions on purpose,
+        #so we can just use a single palette width/height for both.
+
+
+        qp = QPainter(palette.pixmap())
+        qp.setBrush(QBrush(QColor("black"), Qt.SolidPattern))
+        pen = QPen(QtGui.QColor("white"))
+        qp.setPen(pen)
+
+        col = 0
+        row = 0
+        
+        if palette == self.ui.uiCollisionPalette:
+            colors = COL_ATTR_COLORS
+        else:
+            colors = EX_ATTR_COLORS
+
+        for c in colors:
+            val = decimal_to_hex(paletteIndex)
+            qp.setPen(pen)
+
+            if col > 4:
+                col = 0
+                row += 1
+
+            paletteSquare = QRectF(col*cellSize, row*cellSize, cellSize, cellSize)
+
+            if palette == self.ui.uiCollisionPalette:
+                # if c == 0 or c == 128:
+                #     color = QColor(colors[c])
+                # else:
+                #     color = QColor(BLACK)
+                color = QColor(colors[c])
+                qp.setBrush(QBrush(color, Qt.SolidPattern))
+                self.CollisionPalette[paletteIndex] = c
+
+            elif palette == self.ui.uiAttributePalette:
+                color = QColor(colors[c])
+                qp.setBrush(QBrush(color, Qt.SolidPattern))
+                self.AttributePalette[paletteIndex] = c
+                
+            qp.drawRect(paletteSquare)
+            textPosX = int(col*cellSize + cellSize/3)
+            textPosY = int(row*cellSize + cellSize/3)
+            staticText = QtGui.QStaticText(val)
+            qp.setPen(WHITE)
+            qp.drawStaticText(textPosX-1, textPosY-1, staticText)
+            qp.drawStaticText(textPosX, textPosY-1, staticText)
+            qp.drawStaticText(textPosX-1, textPosY, staticText)
+            qp.drawStaticText(textPosX, textPosY, staticText)
+
+            qp.setPen(BLACK)
+            qp.drawStaticText(textPosX, textPosY, staticText)
+            
+            if paletteIndex == self.SelectedPaletteIndex:
+                qp.setBrush(QBrush(WHITE, Qt.SolidPattern))
+                qp.drawRect(paletteSquare)
+
+            paletteIndex += 1
+            col += 1
+
+
+        palette.repaint()
+        qp.end()
     
+
     def drawOverworldEventMap(self, map):
         if os.path.exists(f"maps/{self.CollisionData['m_Name']}c.png"):
             canvas = QtGui.QPixmap(f"maps/{self.CollisionData['m_Name']}c.png")
@@ -384,6 +564,53 @@ class CollisionEditor(QWidget):
 
             self.drawOverworldEventMap(self.ui.uiEventsMap)
 
+    def colMapMouseMoveEvent(self, event):
+        if self.Drawing is False:
+            return
+
+        x = floor(event.x() / self.CellHeight)
+        y = floor(event.y() / self.CellWidth)
+
+        if x == self.LastMouseX and y == self.LastMouseY:
+            return
+
+        self.LastMouseX = x
+        self.LastMouseY = y
+
+        cell = y * self.GridWidth + x
+        paletteIndex = self.SelectedPaletteIndex
+        coll = self.CollisionPalette[paletteIndex]
+
+        if cell < len(self.CollisionData['Attributes']):
+            self.CollisionData['Attributes'][cell] = coll
+        
+        self.drawCollision(self.ui.uiColMap)
+
+    def exMapMouseMoveEvent(self, event):
+        if self.Drawing is False:
+            return
+        
+        x = floor(event.x() / self.CellHeight)
+        y = floor(event.y() / self.CellWidth)
+
+        if x == self.LastMouseX and y == self.LastMouseY:
+            return
+
+        print("exmapmousemove")
+        self.LastMouseX = x 
+        self.LastMouseY = y 
+
+        cell = y * self.GridWidth + x 
+        print(f"Over cell {cell}")
+        paletteIndex = self.SelectedPaletteIndex
+        coll = self.AttributePalette[paletteIndex]
+
+        if cell < len(self.ExData['Attributes']):
+            print("updating cell {cell}")
+            self.ExData['Attributes'][cell] = coll
+
+        self.drawCollision(self.ui.uiColExMap)
+
 
     def mousePressed(self, event, map):
             self.SelectedCell = None
@@ -396,6 +623,7 @@ class CollisionEditor(QWidget):
             cell = row * self.GridWidth + col
 
             self.CellMatrix = {'col':'{:0>2}'.format(col), 'row':'{:0>2}'.format(row)}
+
             self.SelectedCell = {
                 'cell': cell,
                 'map': map
@@ -406,18 +634,41 @@ class CollisionEditor(QWidget):
                 self.drawCollision(map)
                 return
 
-            self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell['cell']]))
-            self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell['cell']]))
             if map == self.ui.uiColMap and not (COLLISIONS.get(self.CollisionData['Attributes'][self.SelectedCell['cell']])) is None:
-                self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[self.CollisionData['Attributes'][self.SelectedCell['cell']]])
+                if self.CollisionMapSelectionMode == MapSelectionMode.VIEW:
+                    self.ui.uiColValue.setText(str(self.CollisionData['Attributes'][self.SelectedCell['cell']]))
+                    self.ui.comboBoxCollisionTile.setCurrentText(COLLISIONS[self.CollisionData['Attributes'][self.SelectedCell['cell']]])  
+                else:
+                    paletteIndex = self.SelectedPaletteIndex
+                    coll = self.CollisionPalette[paletteIndex]
+                    self.CollisionData['Attributes'][self.SelectedCell['cell']] = coll
+                    self.Drawing = True
+
+                    #clear the SelectedCell because it fixes a dumb bug
+                    self.SelectedCell = None
+                
             elif map == self.ui.uiColExMap and not (EX_ATTRIBUTES_BY_VALUE.get(self.ExData['Attributes'][self.SelectedCell['cell']])) is None:
-                self.ui.comboBoxCollisionExTile.setCurrentText(EX_ATTRIBUTES_BY_VALUE.get(self.ExData['Attributes'][self.SelectedCell['cell']]))
+                if self.ExMapSelectionMode == MapSelectionMode.VIEW:
+                    self.ui.uiColExValue.setText(str(self.ExData['Attributes'][self.SelectedCell['cell']]))              
+                    self.ui.comboBoxCollisionExTile.setCurrentText(EX_ATTRIBUTES_BY_VALUE.get(self.ExData['Attributes'][self.SelectedCell['cell']]))
+                else:
+                    paletteIndex = self.SelectedPaletteIndex
+                    exAttr = self.AttributePalette[paletteIndex]
+                    self.ExData['Attributes'][self.SelectedCell['cell']] = exAttr
+                    self.Drawing = True
+
+                    #clear the SelectedCell because it fixes a dumb bug
+                    self.SelectedCell = None
             else:
                 self.UpdateTile = False
                 self.ui.comboBoxCollisionTile.setCurrentText("UNKNOWN")
                 self.UpdateTile = True
 
             self.drawCollision(map)
+
+    def mouseReleased(self, event):
+        self.Drawing = False
+
 
     def eventsMousePressed(self, event, map):
         self.SelectedPlaceData = None
@@ -466,7 +717,7 @@ class CollisionEditor(QWidget):
 
         self.ui.pdID.setText(pd['data']['ID'])
         self.ui.pdTrainerID.setText(str(pd['data']['TrainerID']))
-        self.ui.pdOGI.setText(str(pd['data']['ObjectGraphicIndex']))
+        self.ui.pdOGICombo.setCurrentIndex(int(pd['data']['ObjectGraphicIndex']))
         self.ui.pdPositionX.setValue(int(pd['data']['Position']['x']))
         self.ui.pdPositionY.setValue(int(pd['data']['Position']['y']))
         self.ui.pdHeightLayer.setText(str(pd['data']['HeightLayer']))
@@ -494,12 +745,20 @@ class CollisionEditor(QWidget):
             'y': int(pd['data']['Position']['y'])
         }
 
+
     def printTest(self, msg):
         QMessageBox.information(self, '', msg)
 
 
     def saveEvent(self):
-        thisPD = self.PlaceDataCells[self.SelectedPlaceData]
+        addNew = False
+
+        if (self.PlaceDataCells.get(self.SelectedPlaceData) is None):
+            thisPD = copy.deepcopy(constants.PLACEDATA_NEW)
+            thisPD['completeFile'] = self.PLACEDATA_FILE
+        else:
+            thisPD = self.PlaceDataCells[self.SelectedPlaceData]
+
         pdIndex = thisPD['index']
         pdFile = thisPD['completeFile']
         pd = pdFile['Data'][pdIndex]
@@ -507,7 +766,7 @@ class CollisionEditor(QWidget):
         #Get the SelectedPlaceData and overwrite the corresponding entry in the loaded placedata.
         pd['ID'] = self.ui.pdID.text()
         pd['TrainerID'] = int(self.ui.pdTrainerID.text())
-        pd['ObjectGraphicIndex'] = int(self.ui.pdOGI.text())
+        pd['ObjectGraphicIndex'] = int(self.ui.pdOGICombo.currentIndex())
         pd['Position']['x'] = float(self.ui.pdPositionX.text())
         pd['Position']['y'] = float(self.ui.pdPositionY.text())
         pd['HeightLayer'] = int(self.ui.pdHeightLayer.text())
@@ -528,8 +787,17 @@ class CollisionEditor(QWidget):
         pd['TalkToSize']['x'] = float(self.ui.pdTalkToSizeX.text())
         pd['TalkToSize']['y'] = float(self.ui.pdTalkToSizeY.text())
         pd['TalkBit'] = int(self.ui.pdTalkBit.text())
-        
+
         thisPD['data'] = pd
+
+        if addNew is True:
+            self.PLACEDATA_FILE['Data'].append(pd)
+
+        if os.path.exists('output') is False:
+            os.makedirs('output')
+
+        with open(f"output/{pdFile['m_Name']}.json", 'w+') as out:
+            json.dump(pdFile, out)
 
         return
 

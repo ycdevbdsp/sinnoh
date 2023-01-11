@@ -218,7 +218,8 @@ class Overworld(QMainWindow):
 
                             self.PlaceDatas[pd['zoneID']][pd['ID']] = {
                                 "index": pdIndex,
-                                "data": pd
+                                "data": pd,
+                                "completeFile": tree
                             }
                             pdIndex += 1
 
@@ -299,7 +300,14 @@ class Overworld(QMainWindow):
         exAttributeData = self.CollisionTrees[exFileName]
         placeData = self.PlaceDatas.get(self.Sinnoh['ZoneIDs'][self.SelectedCell])
 
-        filePaths = { 'romfs': self.ROMFS_PATH, 'romfs_unpacked': self.UNPK_ROMFS_PATH, 'dpr': self.DPR_PATH }
+        #grab the full file out of the set of placedatas we're working with so we can easily add new things to it later
+
+        pdFile = ''
+        for p in placeData:
+            if p != 'filename':
+                pdFile = placeData[p]['completeFile']
+
+        filePaths = { 'romfs': self.ROMFS_PATH, 'romfs_unpacked': self.UNPK_ROMFS_PATH, 'dpr': self.DPR_PATH, 'pdFile': pdFile }
         self.CollisionEditor = CollisionEditor(collisionData, exAttributeData, placeData, self.CellMatrix, zoneID, filePaths)
         self.CollisionEditor.show()
         print('done showing')
@@ -367,6 +375,14 @@ class Overworld(QMainWindow):
 
         with open(f"{outDir}\SinnohAttribute_Ex_sp.json", 'w+') as of:
             json.dump(self.SinnohAttribute_Ex_sp, of)
+
+        if os.path.exists("output") is False:
+            os.makedirs("output")
+
+        with open(f"output/{self.CollisionData['m_Name']}.json", 'w+') as out:
+            json.dump(self.CollisionData, out)
+        with open(f"output/{self.ExData['m_Name']}.json", 'w+') as out:
+            json.dump(self.ExData, out)
 
     def cellClicked(self, event, map):
         if self.setSelectedCell(event) is False:
@@ -499,8 +515,6 @@ class Overworld(QMainWindow):
             zAttrEX = zAttrEX[:-(len(zAttrEX) - (self.GridHeight * self.GridWidth))]
             zAttrEXSP = zAttrEXSP[:-(len(zAttrEXSP) - (self.GridHeight * self.GridWidth))]
 
-        # print(f"zJson({len(zJson)}, zAttr({len(zAttr)}), zAttrSP({len(zAttrSP)}, zAttrEX({len(zAttrEX)}, zAttrEXSP({len(zAttrEXSP)})")
-        
         if self.IsArrayed is True:
             self.Sinnoh['ZoneIDs']['Array'] = zJson
             self.SinnohAttribute['AttributeBlocks']['Array'] = zAttr

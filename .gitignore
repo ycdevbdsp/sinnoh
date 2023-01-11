@@ -40,3 +40,5 @@ dist/*
 build/build/BDSPMME.pkg
 testpd.json
 testpd2.json
+venv
+venv/*
