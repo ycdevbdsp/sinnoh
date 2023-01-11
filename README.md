@@ -20,6 +20,4 @@ The width and height of the matrix can be edited by using the boxes near the bot
 
 This tool supports viewing Collision and Ex attributes for selected cells. It will display this grid over map images if the images are provided. This app doesn't provide it for you. Check out this fork of [DSPRE](https://github.com/ycdevbdsp/DS-Pokemon-Rom-Editor) for help. If you have the map images, place them all in a folder named "maps" in the same directory as the matrix editor exe. Do not modify the file names of the map images.
 
-**Note**: The "Save Cell" and "Save Buttons" on the collision viewer form currently does nothing. Pls forgive
-
-![image](https://user-images.githubusercontent.com/56665250/182005422-452a2327-78dd-415b-9c58-da80b1ecc846.png)
+![image](https://user-images.githubusercontent.com/56665250/211705773-0df22ffe-c733-48d2-8adc-72bb2d70da11.png)
