@@ -596,17 +596,14 @@ class CollisionEditor(QWidget):
         if x == self.LastMouseX and y == self.LastMouseY:
             return
 
-        print("exmapmousemove")
         self.LastMouseX = x 
         self.LastMouseY = y 
 
-        cell = y * self.GridWidth + x 
-        print(f"Over cell {cell}")
+        cell = y * self.GridWidth + x
         paletteIndex = self.SelectedPaletteIndex
         coll = self.AttributePalette[paletteIndex]
 
         if cell < len(self.ExData['Attributes']):
-            print("updating cell {cell}")
             self.ExData['Attributes'][cell] = coll
 
         self.drawCollision(self.ui.uiColExMap)
