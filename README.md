@@ -16,8 +16,26 @@ Save all changes to the matrix by clicking the Save Matrix button.
 
 The width and height of the matrix can be edited by using the boxes near the bottom left. Unset matrix cells will appear red and will stay red until explicitly set otherwise.
 
-## Viewing Collision
+## Events Tab
 
-This tool supports viewing Collision and Ex attributes for selected cells. It will display this grid over map images if the images are provided. This app doesn't provide it for you. Check out this fork of [DSPRE](https://github.com/ycdevbdsp/DS-Pokemon-Rom-Editor) for help. If you have the map images, place them all in a folder named "maps" in the same directory as the matrix editor exe. Do not modify the file names of the map images.
+This tool supports viewing Collision and Ex attributes for selected cells. It will display this grid over map images that were exported from DP using this fork of [DSPRE](https://github.com/ycdevbdsp/DS-Pokemon-Rom-Editor) for help. 
+
+This tab shows placedata entries for the loaded map area. Its attributes can be modified using the fields on the right. Selecting one will populate the fields with its current data, and clicking an empty cell will allow you to create a new placedata entry for the loaded map. Make your changes and click "Save Event" to save changes to the event. Click the "Save Map" button in the bottom left to save all your changes to file.
+
+![image](https://user-images.githubusercontent.com/56665250/211706226-2023aa90-1b8c-4c60-a4e9-e6dac6cb6feb.png)
+
+## Collision Tab
+
+The only tiles that  matter here are the first two, 00 and 01. White is no collision and red is collision. You can select either and then draw collision on the map like you were drawing in Paint. Click the "Save Map" button to save your changes to the collision file.
 
 ![image](https://user-images.githubusercontent.com/56665250/211705773-0df22ffe-c733-48d2-8adc-72bb2d70da11.png)
+
+
+## Ex Attributes Tab
+
+This tab allows you to set attributes of each tile, e.g. the sound effect that plays when walking over dirt. Drawing tiles works the same way as the Collision tab. Click the "Save Map" button to save your changes to the attribute file.
+
+
+## Outputs
+
+All files saved are currently written to the "output" folder. This will be updated later to be saved into a structure that can be used with [Ai0796's repacker](https://github.com/Ai0796/BDSP-Repacker). But for the time being, it's assumed you know what to do with the respective output files.
