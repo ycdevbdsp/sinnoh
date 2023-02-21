@@ -379,11 +379,6 @@ class Overworld(QMainWindow):
         if os.path.exists("output") is False:
             os.makedirs("output")
 
-        with open(f"output/{self.CollisionData['m_Name']}.json", 'w+') as out:
-            json.dump(self.CollisionData, out)
-        with open(f"output/{self.ExData['m_Name']}.json", 'w+') as out:
-            json.dump(self.ExData, out)
-
     def cellClicked(self, event, map):
         if self.setSelectedCell(event) is False:
             return

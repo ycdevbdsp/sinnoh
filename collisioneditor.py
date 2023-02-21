@@ -8,16 +8,14 @@ from map import *
 from math import floor
 from tkinter import filedialog
 from tkinter import *
-from PyQt5.QtWidgets import QWidget, QMessageBox, QShortcut, QOpenGLWidget
-from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QKeySequence, QPixmap
+from PyQt5.QtWidgets import QWidget, QMessageBox, QShortcut
+from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QKeySequence
 from PyQt5.QtCore import Qt, QRectF
 import clicklabel
 import collision
 from mousetracker import *
 import zones
 from constants import *
-from modelviewer import modelviewer
-import OpenGL.GL as gl
 
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-300,-300)
@@ -106,9 +104,6 @@ class CollisionEditor(QWidget):
         #Since the map and map_*_ex files are intended to go together, we will assume they
         #should have the same dimensions.
 
-
-        # self.MV = modelviewer.MinimalGLWidget(parent=self.ui.uiOpenGLFrame)
-        # self.MV.setMinimumSize(300,300)
 
         self.GridWidth = self.CollisionData['Width']
         self.GridHeight = int(len(self.CollisionData['Attributes']) / self.GridWidth)
